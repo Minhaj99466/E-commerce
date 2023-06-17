@@ -1,0 +1,54 @@
+<%- include('../userLayout/header.ejs')%>
+
+
+	<div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
+		style="background-image: url('/userAssets/images/backgrounds/243303-monochrome-black-and-white-and-football-hd.jpg')">
+		<div class="container">
+			<div class="form-box">
+				<div class="form-tab">
+
+
+
+					<!-- <div class="tab-content"> -->
+					<div class="tab-pane fade show active" id="signin-2" aria-labelledby="signin-tab-2">
+						<div>
+							<h1>log in</h1>
+						</div>
+						<form action="/login" method="post">
+							<div class="form-group">
+								<label for="singin-email-2">email address *</label>
+								<input type="email" class="form-control" id="singin-email-2" name="email" required>
+							</div><!-- End .form-group -->
+
+							<div class="form-group">
+								<label for="singin-password-2">Password *</label>
+								<input type="password" class="form-control" id="singin-password-2" name="password"
+									required>
+							</div><!-- End .form-group -->
+							<% if(typeof message !=='undefined' ){ %>
+								<p style="color: rgb(226, 7, 7); text-align: center;">
+								  <%= message %>
+								</p>
+								<% } %>
+								<p><a href="/forget" class="forgot-link">Forget your Password?</a></p>
+							<div class="form-footer">
+								<button type="submit" class="btn btn-outline-primary-2">
+									
+									<span>LOG IN</span>
+									<i class="icon-long-arrow-right"></i>
+								</button>
+
+
+							</div><!-- End .form-footer -->
+							<p>Do you have an account?<a href="/register" class="forgot-link">sign up</a></p>
+						</form>
+
+					</div><!-- .End .tab-pane -->
+
+				</div><!-- End .form-tab -->
+			</div><!-- End .form-box -->
+		</div><!-- End .container -->
+	</div><!-- End .login-page section-bg -->
+	</main><!-- End .main -->
+
+

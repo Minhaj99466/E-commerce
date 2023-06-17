@@ -1,0 +1,275 @@
+<%- include('../userLayout/header.ejs')%>
+
+    <%- include('../userLayout/head.ejs') %>
+
+    <div id="reloadDiv">
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/SHOP">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+                <div class="checkout">
+                    <div class="container">
+                        <div class="checkout-discount">
+                            <form action="" id="">
+                                <input type="text" class="form-control" required id="checkout-discount-input">
+                                <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click
+                                        here to enter your code</span></label>
+                            </form>
+                        </div><!-- End .checkout-discount -->
+                        <form action="#" id="checkout-form" >
+                            <div class="row">
+                                <div class="col-lg-9">
+                                    <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                          <div class="d-flex justify-content-end pb-2">
+                                            <a href="/insertAddress" type="button" class="btn btn-outline-primary-2"> Add
+                                                Address</a>
+                                        </div>
+                                            <% if(address.length> 0){
+                                                address.forEach((address)=>{
+                                                %>
+                                                <div class="card card-dashboard">
+                                                    <div class="card-body">
+                                                      <input class="form-check-input pt-5" type="radio" name="selectAddress" id="flexRadioDefault1"
+                                                      value="<%=address.userName %>,<%=address.mobile %>,<%=address.altrenativeMob %>,<%=address.houseName %>,<%=address.city %>,<%=address.state %>,<%=address.pincode %>,<%=address.landmark %>">
+                                                       
+                                                        <ul>
+                                                          <h3 class="card-title"> Address</h3><!-- End .card-title -->
+                                                            <li>Name : <%=address.userName %>
+                                                            </li>
+                                                            <li>mobile : <%=address.mobile %>
+                                                            </li>
+                                                            <li>altrenativeMob : <%=address.altrenativeMob %>
+                                                            </li>
+                                                            <li>houseName : <%=address.houseName %>
+                                                            </li>
+                                                            <li>city : <%=address.city %>
+                                                            </li>
+                                                            <li>state : <%=address.state %>
+                                                            </li>
+                                                            <li>pincode : <%=address.pincode %>
+                                                            </li>
+                                                            <li>landmark : <%=address.landmark %>
+                                                            </li>
+                                                            <a href="/editAddress/?id=<%= address._id %>">
+                                                                <button type="button" class="btn btn-outline-primary-2">
+                                                                    Edit
+                                                                </button>
+                                                            </a>
+                                                            <a href="">
+                                                                
+                                                                    <a class="btn btn-outline-primary-2" type="button"
+                                                                            onclick="deleteAddress('<%= address._id%>')">Delete</a>
+                                                                </button>
+                                                            </a>
+
+                                                        </ul>
+                                                </div><!-- End .card-dashboard -->
+                                        </div>
+                                        <% }) } %>   
+                                    </div><!-- End .col-lg-12 -->
+                                </div><!-- End .row -->
+                            </div><!-- End .col-lg-9 -->
+                            <aside class="col-lg-3">
+                                <div class="summary">
+                                    <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+                                    <table class="table table-summary">
+                                        <tbody>
+                                            <tr class="summary-subtotal">
+                                                <td>Subtotal:</td>
+                                                <td>₹<%=Total%></td>
+                                            </tr><!-- End .summary-subtotal -->
+                                            <tr>
+                                                <td>Shipping:</td>
+                                                <td>₹ 80.00</td>
+                                            </tr>
+                                            <tr class="summary-total">
+                                                <td>Total:</td>
+                                                <td>₹<span id="total"><%= totalAmount %>.00</span></td>
+                                            </tr><!-- End .summary-total -->
+                                        </tbody>
+                                    </table><!-- End .table table-summary -->
+                                   
+                                        <div class="accordion-summary">
+                                            <div class="d-flex align-items-center">
+                                                <div class="mr-2">
+                                                    <input type="radio" id="COD" name="payment" value="COD">
+                                                </div>
+                                                <a href="" class="d-block text-dark" for="pay1">Cash On Delivery</a>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <div class="mr-2">
+                                                  <input type="radio" id="onlinPayment" name="payment" value="onlinPayment">
+                                                </div>
+                                                <a href="" class="d-block text-dark">Razer Pay</a>
+                                            </div>
+                                          </div><!-- End .accordion -->
+                                   
+
+                                    <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                        <span class="btn-text">Place Order</span>
+                                        <span class="btn-hover-text">Place Order</span>
+                                    </button>
+                                    </a>
+                                </div><!-- End .summary -->
+                            </aside><!-- End .col-lg-3 -->
+                    </div><!-- End .row -->
+                    </form>
+                </div><!-- End .container -->
+            </div><!-- End .checkout -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+        </div>
+
+        <script>
+
+$("#checkout-form").submit((e) => {
+        let address = $("input[name=selectAddress]:checked").val();    
+        let total = document.getElementById("total").innerHTML;
+        let payment =  $("input[name=payment]:checked").val();
+        e.preventDefault();
+        $.ajax({
+          url: "/checkout",
+          method: "post",
+          data: {
+            Total: total,
+            address: address,
+            payment : payment 
+          },
+          success: (response) => {
+            if (response.codsuccess == true) {
+              swal.fire({
+                positon: 'center',
+                icon: "success",
+                title: 'Order Placed Successfully',
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: "Go to Shop",
+              }).then((result) => {
+                if (result.dismiss === swal.DismissReason.cancel) {
+                  // Redirect to the shop page
+                  window.location.href = "/shop";
+                }
+              });
+            }
+            else{
+              razorPayment(response.order)
+            }
+          }
+        });
+      });
+
+
+      
+      function razorPayment(order){
+        alert(order)
+  var options = {
+    "key": "rzp_test_G6jLujfVN1hG00", // Enter the Key ID generated from the Dashboard
+    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Acme Corp", //your business name
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function(response) {
+       verifyPayment(response, order);
+    },
+    "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
+        "name": "Gaurav Kumar", //your customer's name
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000" //Provide the customer's phone number for better conversion rates 
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+    rzp1.open();
+}
+
+
+
+function verifyPayment(payment,order){
+    const amount2 = document.getElementById("total").innerHTML;
+    $.ajax({
+      url:"/verifyPayment",
+      method:"post",
+      data:{
+        payment: payment,
+        amount2: amount2,
+        order: order
+      },
+      success:(response)=>{
+        if(response.success){
+          swal.fire({
+            positon: 'center',
+            icon: "success",
+            title: 'Order Placed Successfully',
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: "Go to Shop",
+        }).then((result) => {
+            if (result.dismiss === swal.DismissReason.cancel) {
+              window.location.href = "/shop";
+            }
+          });
+        }else{
+          swal.fire({
+            positon: 'center',
+            icon: "error",
+            title: 'payment failed',
+            showConfirmButton: false,
+            timer:1500,
+        })
+        }
+      }
+    })
+  }
+
+
+
+
+            function deleteAddress(id) {
+              Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  $.ajax({
+                    url: "/deleteAddress",
+                    data: {
+        
+                      id: id,
+                    },
+                    method: "post",
+                    success: (response) => {
+                      if ((response.remove = true)) {
+                        location.reload();
+                      }
+                    },
+                  });
+                }
+              });
+            }
+          </script>
+
+        
+    <%- include('../userLayout/footer.ejs') %>

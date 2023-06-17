@@ -1,0 +1,90 @@
+<%- include('../adminLayout/header.ejs') %>
+
+    <%- include('../adminLayout/sidebar.ejs') %>
+
+        <%- include('../adminLayout/navbar.ejs') %>
+
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <h1>Add Product</h1>
+                    <div class="row">
+
+                        <div class="col-md-6 grid-margin stretch-card">
+
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <form class="forms-sample" method="post" action="" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">productName</label>
+                                            <input type="text" name="productName" class="form-control"
+                                                id="exampleInputUsername1" required>
+                                        </div>
+
+                                    
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">brand</label>
+                                            <!-- <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username"> -->
+                                            <select name="brand" class="form-control" id="exampleInputUsername1"
+                                                required>
+                                                <option>Puma</option>
+                                                <option>Nike</option>
+                                                <option>Nivia</option>
+                                                <option>Adidas</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">category</label>
+                                            <!-- <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username"> -->
+
+                                            <select name="categoryName" class="form-control" id="exampleInputUsername1">
+                                                <% for(let i=0;i< category.length;i++){ %>
+                                                    <option>
+                                                        <%= category[i].categoryName %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+
+
+                                        <label> File uplaod</label>
+                                        <div class="form-group">
+                                          
+                                            <input class="bt"
+                                                style="height: 28px; width: 228px; background-color: gray;color: white;"
+                                                accept="image/*" type="file" name="image" multiple>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">quantity</label>
+                                            <input type="number" name="quantity" class="form-control"
+                                                id="exampleInputUsername1" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">price</label>
+                                            <input type="number" name="price" class="form-control"
+                                                id="exampleInputUsername1" required>
+                                        </div>
+                                        <label for="exampleInputUsername1">description</label>
+                                        <div class="form-group">
+                                            
+                                            <textarea name="description" id="exampleInputUsername1" cols="60" rows="5"></textarea>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                        <button class="btn btn-dark">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <%- include('../adminLayout/footer.ejs') %>

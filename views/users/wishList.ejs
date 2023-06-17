@@ -1,0 +1,128 @@
+<%- include('../userLayout/header.ejs')%>
+
+    <%- include('../userLayout/head.ejs') %>
+
+
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">Wishlist<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="container">
+            <table class="table table-wishlist table-mobile">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>ProductName</th>
+                        <th>price</th>
+                        <th>action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <%
+                        if(wishlist.length>0){
+                        wishlist.forEach((wish)=>{
+                            %>
+                       
+                            <td>
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img src="/adminAssets/adminImage/<%= wish.productId.productImage[0]  %>" alt="acd" width="80px">
+                                    </div>
+                                    <div class="media-body">
+                                        <p><p></p></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="price ms-5">
+                                <h5><%=wish.productId.productName%></h5>
+                           
+                            </td>
+                           
+                            <td class="price ms-5">
+                                <h5>₹<%=wish.productId.price%></h5>
+                           
+                            </td>
+                            
+                            <td>
+                                <a href="/deleteWishlist?id=<%= wish.productId._id %>" class="btn btn-primary">Remove<span class="lnr lnr-arrow-right"></span></a>
+                                <a  onclick="addToCart('<%= wish.productId._id %>')" class="btn btn-success">Add to Cart<span class="lnr lnr-arrow-right"></span></a>
+                                        
+                                   
+                                </div>
+                            </td>
+                            
+                        </tr>
+                       
+                       
+                        
+                          <%
+                    })
+                }else{ %>
+                </tbody>
+            </table><!-- End .table table-wishlist -->
+                     <h1 class="text-center pt-5 pb-5" >No items in wishlist.</h1>
+                    
+                    <% } %>
+
+                </tbody>
+            </table><!-- End .table table-wishlist -->
+            <div class="wishlist-share">
+                <div class="social-icons social-icons-sm mb-2">
+                    <label class="social-label">Share on:</label>
+                    <a href="#" class="social-icon" title="Facebook" target="_blank"><i class="icon-facebook-f"></i></a>
+                    <a href="#" class="social-icon" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>
+                    <a href="#" class="social-icon" title="Instagram" target="_blank"><i class="icon-instagram"></i></a>
+                    <a href="#" class="social-icon" title="Youtube" target="_blank"><i class="icon-youtube"></i></a>
+                    <a href="#" class="social-icon" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
+                </div><!-- End .soial-icons -->
+            </div><!-- End .wishlist-share -->
+        </div><!-- End .container -->
+    </div><!-- End .page-content -->
+</main><!-- End .main -->
+
+<script>
+      function addToCart(productId){
+            $.ajax({
+                url:'/addToCart',
+                method:'post',
+                data:{
+                    id:productId
+                },
+                success:(response)=>{  
+                    if(response.success){
+                        swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Product added to cart',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        });
+                    }else{
+                        swal.fire({ 
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message
+                        });
+                    }
+                }
+            })
+        }
+</script>
+
+<%- include('../userLayout/footer.ejs') %>
