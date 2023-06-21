@@ -40,7 +40,7 @@ userRoute.post('/verification',userController.verifyEmail)
 
 userRoute.get('/userProfile',auth.isLogin,userController.loadUserProfile)
 
-userRoute.get('/orders',auth.isLogin,userController.loadOrders)
+userRoute.get('/orders',auth.isLogin,orderController.loaduserOrders)
 
 userRoute.get('/forget',auth.isLogout,userController.loadForget)
 
@@ -84,6 +84,11 @@ userRoute.get('/deleteWishlist',wishlistController.deleteWishlist)
 
 userRoute.get('/filterCategory/:id',userController.filterCategory)
 userRoute.get('/priceSort/:id',userController.priceSort)
+
+userRoute.get('/viewOrder/:id',auth.isLogin,orderController.loadViewSingleUser)
+userRoute.post('/returnOrder',auth.isLogin,orderController.returnOrder)
+userRoute.post('/cancelOrder',auth.isLogin,orderController.CancelOrder);
+
 
 
 

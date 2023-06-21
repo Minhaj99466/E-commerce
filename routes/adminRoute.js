@@ -5,6 +5,7 @@ const auth = require("../middleware/adminauth");
 const adminController = require("../controller/adminController");
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController");
+const orderController=require("../controller/orderController")
 const multer = require("multer");
 const update = require("../config/multconfig");
 
@@ -53,6 +54,9 @@ adminRoute.post('/addproduct',update.upload.array('image',10),productController.
 adminRoute.post('/editProduct/:id',update.upload.array('image',10),productController.updateProduct)
 adminRoute.post("/editProduct/updateimage/:id",update.upload.array('image'),productController.updateimage)
 
+adminRoute.get("/orders",auth.isLogin,orderController.loadAdminOrders)
+adminRoute.get("/vieworder/:id",auth.isLogin,orderController.loadSingleOrder)
+adminRoute.post("/updateStatus",auth.isLogin,orderController.changeStatus)
 
 adminRoute.get("*", function (req, res) {
   res.redirect("/admin");

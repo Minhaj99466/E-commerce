@@ -29,9 +29,13 @@ const userSchema=mongoose.Schema({
         type:Boolean,
         default:false
     },
-    token:{
+    coupon:{
         type:String,
         default:''
+    },
+    wallet:{
+        type:Number,
+        default:0
     }
     
 })

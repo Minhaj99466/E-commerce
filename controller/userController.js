@@ -327,23 +327,7 @@ const loadUserProfile = async (req, res,next) => {
   }
 };
 
-//======================================  LOAD ORDERS ========================================//
 
-const loadOrders = async (req, res,next) => {
-  try {
-    if (req.session.user_id) {
-      const session = req.session.user_id;
-      const id = req.session.user_id;
-      const userdata = await User.findById({ _id: req.session.user_id });
-      res.render("orders", { user: userdata, session });
-    } else {
-      const session = null;
-      res.redirect("/home", { message: "please login" });
-    }
-  } catch (error) {
-    next(error)
-  }
-};
 
 //===================================== FOR RESET PASSWORD SEND EMAIL ===============================//
 
@@ -533,7 +517,6 @@ module.exports = {
   sendverifyMail,
   loadVerification,
   loadUserProfile,
-  loadOrders,
   loadForget,
   forgetVerify,
   changePassword,

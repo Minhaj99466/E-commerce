@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  products: [{
+  products: [{ 
     productId: {
       type: String,
       required: true,
@@ -34,7 +34,16 @@ const orderSchema = new mongoose.Schema({
     status:{
       type:String,
       default:'placed'
-    }
+    },
+    cancelReason:{
+        type:String,
+        
+    },
+    returnReason:{
+        type:String,
+        
+    },
+
 
   }],
   totalAmount: {

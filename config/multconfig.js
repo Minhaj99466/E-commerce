@@ -12,6 +12,7 @@ const storage =multer.diskStorage({
     })
 
     const imageFilter= function(req,file,cb){
+        //accept images only
         if(!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)){
             req.fileValidationerror='only images files are allowed!'
             return cb(new Error('only images files are allowed!'),false)
@@ -23,4 +24,4 @@ const storage =multer.diskStorage({
 
     module.exports={
         upload,
-    }
+    } 

@@ -4,6 +4,7 @@ const upperCase = require("upper-case");
 const Category = require("../model/categoryModel");
 const fs =require('fs')
 const path=require('path')
+const Sharp=require('sharp')
 let message = "";
 
 //===================== LOAD PRODUCT =======================//
@@ -48,7 +49,12 @@ const insertProduct = async (req, res,next) => {
     const images = [];
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
-        images.push(req.files[i].filename);
+        images[i]=req.files[i].filename ;
+        await Sharp('./public/adminAssets/adminImage/' +req.files[i].filename)  // added await to ensure image is resized before uploading
+        .resize(800, 800)
+        .toFile(
+          "./public/adminAssets/adminImage/productImage/" + req.files[i].filename
+        );
       }
     }
     
@@ -97,7 +103,7 @@ const editProduct = async (req, res,next) => {
   try {
     const id = req.params.id;
     const productData = await Product.findOne({ _id: id }).populate("categoryName");
-    const catData = await Category.find();
+    const catData = await Category.find({is_delete: false});
     const adminData = await User.findById({ _id: req.session.auser_id });
     res.render("editProduct", {
       admin: adminData,
@@ -184,11 +190,15 @@ const updateimage = async (req, res,next) => {
     const id = req.params.id;
     const prodata = await Product.findOne({ _id: id });
     const imglength = prodata.productImage.length;
+    const images = [];
 
-    if (imglength <= 10) {
-      let images = []; 
-      for (file of req.files) {
-        images.push(file.filename);
+    for (let i = 0; i < req.files.length; i++) {
+      images[i]=req.files[i].filename ;
+      await Sharp('./public/adminAssets/adminImage/' +req.files[i].filename)  // added await to ensure image is resized before uploading
+      .resize(800, 800)
+      .toFile(
+        "./public/adminAssets/adminImage/productImage/" + req.files[i].filename
+      );
       }
 
       if (imglength + images.length <= 10) {
@@ -197,7 +207,7 @@ const updateimage = async (req, res,next) => {
           { $addToSet: { productImage: { $each: images } } }
         );
 
-        res.redirect("/admin/editProductList/" + id);
+        res.redirect("/admin/editProduct/" + id);
       } else {
         const productData = await Product.findOne({ _id: id }).populate(
           "categoryName"
@@ -210,14 +220,12 @@ const updateimage = async (req, res,next) => {
           category: categoryData,
           imgfull: true,
         });
-      }
-    } else {
-      res.redirect("/admin/productList");
+      
     }
   } catch (error) {
     next(error)
   }
-};
+}
 
 module.exports = {
   loadProduct,
