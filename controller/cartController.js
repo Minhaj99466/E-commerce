@@ -74,7 +74,7 @@ const addToCart = async (req, res,next) => {
     const userId = req.session.user_id;
     const userData = await User.findOne({ _id: userId });
     const proId = req.body.id;
-    const productData = await Product.findOne({ _id: proId });
+    const productData = await Product.findOne({ _id: proId })
 
    
     const productQuantity = productData.quantity;
@@ -94,6 +94,7 @@ const addToCart = async (req, res,next) => {
 
 
     const updatedProduct = cartData.products.find((product) => product.productId === proId);
+    console.log(updatedProduct);
  
     const updatedQuantity = updatedProduct ? updatedProduct.count : 0;
 

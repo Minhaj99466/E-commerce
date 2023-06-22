@@ -485,14 +485,26 @@ const filterCategory = async (req,res,next)=>{
 
 const priceSort=async(req,res,next)=>{
   try {
-    console.log('shdgh');
+    var search = '';
+    if(req.query.search){
+      search = req.query.search;
+    }
+    const limit = 6;
+    const count = await Product.find({is_delete:false,
+      $or:[
+        {productName:{$regex:'.*'+search+'.*',$options:'i'}},
+        {categoryName:{$regex:'.*'+search+'.*',$options:'i'}},
+        // {description:{$regex:'.*'+search+'.*',$options:'i'}},
+      ]
+    })
+    .countDocuments();
     const id=req.params.id
     const session=req.session.user_id
     const userData=await User.findById(session)
     const categoryData=await Category.find({is_delete:false})
     const sortData= await Product.find({}).sort({price:id})
     if(sortData){
-      res.render("shop",{product:sortData,category:categoryData,user:userData})
+      res.render("shop",{totalPages:Math.ceil(count/limit),product:sortData,session,category:categoryData,user:userData})
     }else{
       redirect('/shop')
     }

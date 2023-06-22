@@ -1,5 +1,7 @@
 const User = require("../model/userModel");
 const bcrypt = require("bcrypt");
+const Product=require('../model/productModel')
+const Order=require('../model/orderModel')
 let message = "";
 
 //============= SECURE PASSWORD ============== //
@@ -57,7 +59,11 @@ const verifyLogin = async (req, res,next) => {
 const loadDashboard = async (req, res,next) => {
   try {
     const adminData = await User.findById({ _id: req.session.auser_id });
-    res.render("home", { admin: adminData });
+    const productData= await Product.find({})
+    const userData=await User.find({})
+    const orderData=await Order.find({})
+    
+    res.render("home", { admin: adminData,product:productData,user:userData ,order:orderData});
   } catch (error) {
     next(error)
   }
