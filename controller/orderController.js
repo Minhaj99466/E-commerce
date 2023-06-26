@@ -46,6 +46,22 @@ const placeOrder = async (req, res, next) => {
         await Cart.deleteOne({ userId: id });
         res.json({ codsuccess: true });
       } else {
+        if(paymentMethod==='walletpayement'){
+          const wallet = userName.wallet
+          if(wallet >= Total){
+            await Cart.deleteOne({ userId: req.session.user_id });
+            for (let i = 0; i < products.length; i++) {
+              const pro = products[i].productId;
+              const count = products[i].count;
+              await Product.findByIdAndUpdate({ _id: pro }, { $inc: { quantity: -count } });
+              await User.findOneAndUpdate({_id:req.session.user_id},{$inc:{wallet: -Total}})
+              await Order.findOneAndUpdate({_id:order._id},{$set:{status:"placed"}});
+              res.json({ codsuccess: true });
+        }
+      }else{
+        res.json({walletFailed:true});
+      }
+    }else{
         const orderId = orderData._id;
         const totalAmount = orderData.totalAmount;
         var options = {
@@ -58,6 +74,7 @@ const placeOrder = async (req, res, next) => {
           res.json({ order });
         });
       }
+    }
     } else {
       res.redirect("/");
     }

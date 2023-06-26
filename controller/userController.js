@@ -163,7 +163,7 @@ const loadShop = async (req,res,next)=>{
     }
 
     var page = 1;
-    if(req.query.page){
+    if(req.query.page){ 
       page = req.query.page;
     }
 

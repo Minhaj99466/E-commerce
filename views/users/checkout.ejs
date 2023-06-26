@@ -39,7 +39,7 @@
                                                 %>
                                                 <div class="card card-dashboard">
                                                     <div class="card-body">
-                                                      <input class="form-check-input pt-5" type="radio" name="selectAddress" id="flexRadioDefault1"
+                                                      <input class="form-check-input pt-5" required type="radio" name="selectAddress" id="flexRadioDefault1"
                                                       value="<%=address.userName %>,<%=address.mobile %>,<%=address.altrenativeMob %>,<%=address.houseName %>,<%=address.city %>,<%=address.state %>,<%=address.pincode %>,<%=address.landmark %>">
                                                        
                                                         <ul>
@@ -84,9 +84,14 @@
                                     <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
                                     <table class="table table-summary">
                                         <tbody>
+                                          
+                                            <tr class="summary-subtotal">
+                                                <td>Wallet:</td>
+                                                <td>₹<%=user.wallet%>.00</td>
+                                            </tr><!-- End .summary-subtotal -->
                                             <tr class="summary-subtotal">
                                                 <td>Subtotal:</td>
-                                                <td>₹<%=Total%></td>
+                                                <td>₹<%=Total%>.00</td>
                                             </tr><!-- End .summary-subtotal -->
                                             <tr>
                                                 <td>Shipping:</td>
@@ -99,20 +104,28 @@
                                         </tbody>
                                     </table><!-- End .table table-summary -->
                                    
-                                        <div class="accordion-summary">
+                                        <div class="accordion-summary"> 
+                                           <div class="d-flex align-items-center">
+                                                <div class="mr-2">
+                                                  <input required type="radio" id="walletpayement" name="payment" value="walletpayement">
+                                                </div>
+                                                <a href="" class="d-block text-dark">Wallet Payement</a>
+                                            </div>
                                             <div class="d-flex align-items-center">
                                                 <div class="mr-2">
-                                                    <input type="radio" id="COD" name="payment" value="COD">
+                                                    <input required type="radio" id="COD" name="payment" value="COD">
                                                 </div>
                                                 <a href="" class="d-block text-dark" for="pay1">Cash On Delivery</a>
                                             </div>
                                             <div class="d-flex align-items-center">
                                                 <div class="mr-2">
-                                                  <input type="radio" id="onlinPayment" name="payment" value="onlinPayment">
+                                                  <input required type="radio" id="onlinPayment" name="payment" value="onlinPayment">
                                                 </div>
                                                 <a href="" class="d-block text-dark">Razer Pay</a>
                                             </div>
+                                           
                                           </div><!-- End .accordion -->
+
                                    
 
                                     <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
@@ -160,7 +173,16 @@ $("#checkout-form").submit((e) => {
                   window.location.href = "/shop";
                 }
               });
-            }
+            }else if(response.walletFailed == true){
+              swal.fire({
+                  positon: 'center',
+                  icon: "error",
+                  title: 'Insufficient Balance In Your Wallet',
+                  showConfirmButton: false,
+                  showCancelButton: false,
+                  timer:1500
+              })
+		      }
             else{
               razorPayment(response.order)
             }
@@ -171,7 +193,7 @@ $("#checkout-form").submit((e) => {
 
       
       function razorPayment(order){
-        alert(order)
+       
   var options = {
     "key": "rzp_test_G6jLujfVN1hG00", // Enter the Key ID generated from the Dashboard
     "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise

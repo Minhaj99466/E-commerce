@@ -1,7 +1,7 @@
 const User = require("../model/userModel");
 const bcrypt = require("bcrypt");
-const Product=require('../model/productModel')
-const Order=require('../model/orderModel')
+const Product = require("../model/productModel");
+const Order = require("../model/orderModel");
 let message = "";
 
 //============= SECURE PASSWORD ============== //
@@ -17,17 +17,17 @@ const securePassword = async (password) => {
 
 //============== LOGIN PAGE LOAD ===============//
 
-const loadLogin = async (req, res,next) => {
+const loadLogin = async (req, res, next) => {
   try {
     res.render("login");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //================ VERIFY LOGIN ================//
 
-const verifyLogin = async (req, res,next) => {
+const verifyLogin = async (req, res, next) => {
   try {
     const email = req.body.email;
 
@@ -50,51 +50,152 @@ const verifyLogin = async (req, res,next) => {
       res.render("login", { message: "email and password is incorrect" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //=================== DASHBOARD LOAD ===============//
 
-const loadDashboard = async (req, res,next) => {
+const loadDashboard = async (req, res, next) => {
   try {
     const adminData = await User.findById({ _id: req.session.auser_id });
-    const productData= await Product.find({})
-    const userData=await User.find({})
-    const orderData=await Order.find({})
-    
-    res.render("home", { admin: adminData,product:productData,user:userData ,order:orderData});
+    const productData = await Product.find({ is_delete: false });
+    const userData = await User.find({});
+    const orderData = await Order.find({});
+
+    const totalSales = await Order.aggregate([
+      {
+        $match: { "products.status": "Delivered" },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$totalAmount" },
+        },
+      },
+    ]);
+    let totalAmount = 0;
+
+    if (totalSales.length > 0) {
+      totalAmount += totalSales[0].totalAmount;
+      console.log("Total amount of delivered orders:", totalAmount);
+    } else {
+      console.log("No delivered orders found.");
+    }
+
+    const totalCodResult = await Order.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $match: { "products.status": "Delivered", paymentMethod: "COD" },
+      },
+      {
+        $group: {
+          _id: null,
+          totalCodAmount: { $sum: "$products.totalPrice" },
+        },
+      },
+    ]);
+
+    let totalCod = 0;
+    if (totalCodResult.length > 0) {
+      totalCod = totalCodResult[0].totalCodAmount;
+    } else {
+      console.log("No COD orders found.");
+    }
+
+    const totalOnlinePaymentResult = await Order.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $match: {
+          "products.status": "Delivered",
+          paymentMethod: "onlinPayment",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalCodAmount: { $sum: "$products.totalPrice" },
+        },
+      },
+    ]);
+
+    let totalOnline = 0;
+    if (totalOnlinePaymentResult.length > 0) {
+      totalOnline = totalOnlinePaymentResult[0].totalCodAmount;
+    } else {
+      console.log("No online orders found.");
+    }
+
+    const totalWalletResult = await Order.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $match: {
+          "products.status": "Delivered",
+          paymentMethod: "walletpayment",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalCodAmount: { $sum: "$products.totalPrice" },
+        },
+      },
+    ]);
+
+    let totalWallet = 0;
+    if (totalWalletResult.length > 0) {
+      totalWallet = totalWalletResult[0].totalCodAmount;
+    } else {
+      console.log("No wallet orders found.");
+    }
+
+    res.render("home", {
+      admin: adminData,
+      product: productData,
+      user: userData,
+      order: orderData,
+      total: totalAmount,
+      totalCod,
+      totalWallet,
+      totalOnline
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //==================== ADMIN LOGOUT ====================//
 
-const logOut = async (req, res,next) => {
+const logOut = async (req, res, next) => {
   try {
     req.session.destroy();
     res.redirect("/admin");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //===================== USER LIST =======================//
 
-const userList = async (req, res,next) => {
+const userList = async (req, res, next) => {
   try {
     const adminData = await User.findById({ _id: req.session.auser_id });
     const userData = await User.find({ is_admin: 0 });
     res.render("userList", { admin: adminData, user: userData });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //======================= USER BLOCK ========================//
 
-const block = async (req, res,next) => {
+const block = async (req, res, next) => {
   try {
     const userData = await User.findByIdAndUpdate(req.query.id, {
       $set: { is_block: true },
@@ -102,13 +203,13 @@ const block = async (req, res,next) => {
     req.session.user = null;
     res.redirect("/admin/userList");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //====================== USER UN-BLOCK ======================//
 
-const unblock = async (req, res,next) => {
+const unblock = async (req, res, next) => {
   try {
     const userData = await User.findByIdAndUpdate(req.query.id, {
       $set: { is_block: false },
@@ -116,11 +217,9 @@ const unblock = async (req, res,next) => {
     req.session.user = null;
     res.redirect("/admin/userList");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
-
-
 
 module.exports = {
   loadLogin,
@@ -130,5 +229,4 @@ module.exports = {
   userList,
   block,
   unblock,
- 
 };
