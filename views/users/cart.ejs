@@ -81,7 +81,23 @@ input.btpos {
                                                         </h3><!-- End .product-title -->
                                                     </div><!-- End .product -->
                                                 </td>
-                                                <td class="price-col">₹<%= products.productId.price %>.00</a></td>
+                                                <td > <% 
+                                
+                                                    const discount =  products.discountPercentage; 
+                            
+                                                    const price =  products.price 
+                            
+                                                    const discountAmount = Math.round((price*discount)/100)
+                            
+                                                    const total = price - discountAmount
+        
+                                                %>
+                                                <% if(discountAmount <= 0) {%>
+                                                    ₹<%= products.productId.price %>.00
+                                                <% }else{ %>
+                                                    <del class="text-danger">₹ <%= products.productId.price %>.00</del>
+                                                    ₹ <%= products.totalPrice %>.00
+                                                <% } %><!-- End .product-price --></td>
                                                 <td class="quantity-col">
                                                     <div class="cart-product-quantity">
                                                         <input type="button" onclick="changeQuantity('<%=userId%>','<%=products.productId._id%>',-1)" class="btneg " value="-">
@@ -89,7 +105,7 @@ input.btpos {
                                                         <input type="button" onclick="changeQuantity('<%=userId%>','<%=products.productId._id%>',1)" class="btpos " value="+">                                                                                                                  
                                                     </div><!-- End .cart-product-quantity -->
                                                 </td>
-                                                <td class="total-col">₹<%= products.totalPrice %></td>
+                                                <td class="total-col">₹ <%= products.totalPrice %></td>
                                                 <td class="remove-col"><button class="btn-remove" onclick="deletecart('<%=products.productId._id%>')"><i class="icon-close"></i></button></td>
                                             </tr>
                                             <% }) %>

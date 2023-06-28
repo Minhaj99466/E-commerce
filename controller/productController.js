@@ -124,7 +124,9 @@ const updateProduct = async (req, res,next) => {
     req.body.categoryName.trim() === "" ||
     req.body.description.trim() === "" ||
     req.body.quantity.trim() === "" ||
-    req.body.price.trim() === ""
+    req.body.price.trim() === "" ||
+    req.body.discountName.trim() === "" ||
+    req.body.discountPercentage.trim() === ""
   ) {
     const id = req.params.id;
     const productData = await Product.findOne({ _id: id }).populate("categoryName");
@@ -153,6 +155,8 @@ const updateProduct = async (req, res,next) => {
             price: req.body.price,
             description: req.body.description,
             brand: req.body.brand,
+            discountPercentage:req.body.discountPercentage,
+            discountName:req.body.discountName,            
           },
         }
       );
@@ -227,6 +231,33 @@ const updateimage = async (req, res,next) => {
   }
 }
 
+
+
+//---------------- ADMIN OFFER ADDING SECTION START
+const addOffer = async(req,res,next)=>{
+  try {
+      const productId = req.body.id
+      const discountPercentage = req.body.discountPercentage
+      const discountName = req.body.discountName
+      const updateProduct = await Product.findOneAndUpdate(
+          { _id: productId },
+          {
+            $set: {
+              discountName: discountName,
+              discountPercentage: discountPercentage
+            }
+          },
+          { new: true }
+        );  
+        console.log(updateProduct);
+       res.redirect("/admin/productList");  
+
+  } catch (error) {
+      
+  }
+}
+ 
+
 module.exports = {
   loadProduct,
   insertProduct,
@@ -236,4 +267,5 @@ module.exports = {
   updateimage,
   deleteimage,
   updateProduct,
+  addOffer
 };

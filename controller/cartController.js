@@ -99,21 +99,27 @@ const addToCart = async (req, res, next) => {
     const cartProduct = cartData.products.find(
       (products) => products.productId === proId
     );
+
+    const discount =  productData.discountPercentage;          
+    const price =  productData.price 
+    const discountAmount = Math.round((price*discount)/100)
+    const total = price - discountAmount
+
     if (cartProduct) {
       await Cart.updateOne(
         { userId: userId, "products.productId": proId },
         {
           $inc: {
             "products.$.count": 1,
-            "products.$.totalPrice": productData.price,
+            "products.$.totalPrice": total,
           },
         }
       );
     } else {
       cartData.products.push({
         productId: proId,
-        productPrice: productData.price,
-        totalPrice: productData.price,
+        productPrice:total,
+        totalPrice: total,
       });
       await cartData.save();
     }

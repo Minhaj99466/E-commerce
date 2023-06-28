@@ -32,7 +32,13 @@ const productschema=mongoose.Schema({
     is_delete:{
         type:Boolean,
         default:false,
-    }
+    },
+    discountPercentage:{
+        type:Number,
+    },
+    discountName:{
+        type:String,
+    },
 })
 
 module.exports=mongoose.model('product',productschema)

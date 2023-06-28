@@ -138,9 +138,23 @@
                                                 <a href="#"> <%= product[i].categoryName  %> </a>
                                             </div><!-- End .product-cat -->
                                             <h3 class="product-title"><a href="product.html"> <%= product[i].productName %> </a></h3><!-- End .product-title -->
-                                            <div class="product-price">₹
-                                                <%= product[i].price  %>
-                                            </div><!-- End .product-price -->
+                                            <% 
+                                
+                                            const discount =  product[i].discountPercentage; 
+                    
+                                            const price =  product[i].price 
+                    
+                                            const discountAmount = Math.round((price*discount)/100)
+                    
+                                            const total = price - discountAmount
+
+                                        %>
+                                        <% if(discountAmount <= 0) {%>
+                                            ₹<%= product[i].price %>.00
+                                        <% }else{ %>
+                                            <del class="text-danger">₹<%= product[i].price %>.00</del>
+                                            ₹<%= total %>.00
+                                        <% } %><!-- End .product-price -->
                                            
 
                                             <!-- <div class="product-nav product-nav-thumbs">

@@ -1,4 +1,4 @@
-const sessionSecret='mysitesessionsecret'
+const sessionSecret=process.env.secret
 
 
 
