@@ -221,6 +221,87 @@ const unblock = async (req, res, next) => {
   }
 };
 
+const loadSalesReport=async(req,res,next)=>{
+  try {
+    const adminData = await User.findById(req.session.auser_id);  
+    const order = await Order.aggregate([
+      { $unwind: "$products" },
+      { $match: { 'products.status': 'Delivered' } },
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+          from: 'products',
+          let: { productId: { $toObjectId: '$products.productId' } },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } }
+          ],
+          as: 'products.productDetails'
+        }
+      },  
+      {
+        $addFields: {
+          'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
+        }
+      }
+    ]);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const orderCount = order.length;
+    const totalPages = Math.ceil(orderCount / limit);
+    const paginatedOrder = order.slice(startIndex, endIndex);
+
+    res.render('salesReport',{admin:adminData,order:paginatedOrder,activePage:'salesReport',currentPage:page,totalPages})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const sortReport = async (req, res) => {
+  try {
+    const adminData = await User.findById({ _id: req.session.auser_id });
+    const id = parseInt(req.params.id);
+    const from = new Date();
+    const to = new Date(from.getTime() - id * 24 * 60 * 60 * 1000);
+    
+    const order = await Order.aggregate([
+      { $unwind: "$products" },
+      {$match: {
+        'products.status': 'Delivered',
+        $and: [
+          { 'products.deliveryDate': { $gt: to } },
+          { 'products.deliveryDate': { $lt: from } }
+        ]
+      }},
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+          from: 'products',
+          let: { productId: { $toObjectId: '$products.productId' } },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } }
+          ],
+          as: 'products.productDetails'
+        }
+      },  
+      {
+        $addFields: {
+          'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
+        }
+      }
+    ]);
+    console.log(order)
+
+    res.render("salesReport", { order ,admin:adminData });
+   
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 module.exports = {
   loadLogin,
   verifyLogin,
@@ -229,4 +310,6 @@ module.exports = {
   userList,
   block,
   unblock,
+  loadSalesReport,
+  sortReport
 };

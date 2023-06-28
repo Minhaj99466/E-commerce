@@ -58,6 +58,9 @@ adminRoute.get("/orders",auth.isLogin,orderController.loadAdminOrders)
 adminRoute.get("/vieworder/:id",auth.isLogin,orderController.loadSingleOrder)
 adminRoute.post("/updateStatus",auth.isLogin,orderController.changeStatus)
 
+adminRoute.get("/salesReport",auth.isLogin,adminController.loadSalesReport)
+adminRoute.get('/salesReportSort/:id',auth.isLogin,adminController.sortReport)
+
 adminRoute.get("*", function (req, res) {
   res.redirect("/admin");
 });

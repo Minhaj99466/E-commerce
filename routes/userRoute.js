@@ -89,6 +89,11 @@ userRoute.get('/viewOrder/:id',auth.isLogin,orderController.loadViewSingleUser)
 userRoute.post('/returnOrder',auth.isLogin,orderController.returnOrder)
 userRoute.post('/cancelOrder',auth.isLogin,orderController.CancelOrder);
 
+//userRoute.get('/invoice',auth.isLogin,orderController.Invoice)
+
+//---------------- INVOICE DOWNLODING ROUTE SECTION START
+userRoute.get('/invoiceDownload/:id',orderController.loadInvoice);
+
 
 
 

@@ -43,8 +43,9 @@ const orderSchema = new mongoose.Schema({
         type:String,
         
     },
-
-
+    deliveryDate:{
+      type:Date,
+    },
   }],
   totalAmount: {
     type: Number,

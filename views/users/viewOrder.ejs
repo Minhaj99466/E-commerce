@@ -10,12 +10,15 @@
         <div class="d-flex justify-content-center ">
            
              <div class="p-5 w-50 h-50" style="border: 1px solid #dee2e6">
-                 <h1>Order Details</h1>
+                 <h3>Order Details</h3>
                 <span>Order Date :</span><span class="font-weight-bold" > <%= orders.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).replace(/\//g,'-') %> </span><br>
                 <span>Total Amount : <span class="font-weight-bold"> <%= orders.totalAmount %> </span></span><br>
                 <span>Payment Method :<span class="font-weight-bold"><%= orders.paymentMethod %> </span></span><br>
                 <span> Order Id:</span><span class="font-weight-bold"> <%= orders._id %></span></span><br>
                 <span>Address :</span><span class="font-weight-bold"><%= orders.deliveryAddress %></span></span><br>
+                <span class="pt-3 d-flex justify-content-end">
+                    <a href="/invoiceDownload/<%= orders._id %> " class="btn btn-outline-primary-2">Invoice Downlode</a>
+                </span>
              </div>
         </div>
         

@@ -468,7 +468,7 @@ const filterCategory = async (req,res,next)=>{
     const userData = await User.find({})
     
     const productData = await Product.find({categoryName:id,is_delete:false})
-    console.log(productData+"ghjdffghsdrfgndfghdgfhj")
+
     if(categoryData.length > 0){
       res.render('shop',{totalPages:Math.ceil(count/limit),product:productData,session,category:categoryData,user:userData});
     }else{

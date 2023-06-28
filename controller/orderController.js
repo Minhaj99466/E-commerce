@@ -4,6 +4,10 @@ const User = require("../model/userModel");
 const Order = require("../model/orderModel");
 const Cart = require("../model/cartModel");
 const razorpay = require("razorpay");
+const path = require('path')
+const fs = require('fs')
+const  puppeteer = require('puppeteer')
+const ejs = require('ejs')
 
 var instance = new razorpay({
   key_id: process.env.Razorpay_Key_Id,
@@ -18,7 +22,6 @@ const placeOrder = async (req, res, next) => {
     const paymentMethod = req.body.payment;
     const cartData = await Cart.findOne({ userId: id });
     const products = cartData.products;
-    console.log(products);
     const Total = parseInt(req.body.Total);
 
     const status = paymentMethod === "COD" ? "placed" : "pending";
@@ -31,6 +34,7 @@ const placeOrder = async (req, res, next) => {
       totalAmount: Total,
       date: new Date(),
       status: status,
+
     });
     const orderData = await order.save();
     if (orderData) {
@@ -121,7 +125,7 @@ const verifyPayment = async (req, res, next) => {
 const loadAdminOrders = async (req, res, next) => {
   try {
     const adminData = await User.findById({ _id: req.session.auser_id });
-    const orders = await Order.find().populate("products.productId");
+    const orders = await Order.find().populate("products.productId").sort({date:1});
     if (orders.length > 0) {
       res.render("order", { admin: adminData, orders: orders });
     } else {
@@ -155,19 +159,35 @@ const changeStatus = async(req,res) =>{
     const userId = req.body.userId
     const statusChange = req.body.status
     
+    
     const updatedOrder = await Order.findOneAndUpdate(
       {
         userId: userId,
-        'products._id': id
+        'products._id': id,
       },
       {
         $set: {
-          'products.$.status': statusChange
-        }
+          'products.$.status': statusChange,
+        },
       },
       { new: true }
     );
-    console.log(updatedOrder);
+    if(statusChange==="Delivered"){
+     await Order.findOneAndUpdate(
+        {
+          userId: userId,
+          'products._id': id,
+        },
+        {
+          $set: {
+            'products.$.deliveryDate': new Date(),
+          },
+        },
+        { new: true }
+      );
+    }
+    console.log(updatedOrder+"sdfghjfdfggjlhgh");
+
     if(updatedOrder){
       res.json({success:true})
     }
@@ -216,7 +236,6 @@ const loadViewSingleUser = async (req,res)=> {
 
 const returnOrder = async(req,res) =>{
   try {
-    console.log("hguhjkfhjkfhjk");
     const ordersId = req.body.ordersid;
     const Id = req.session.user_id
     const id = req.body.orderid;
@@ -307,6 +326,63 @@ const CancelOrder = async (req, res) => {
   }
 };
 
+const loadInvoice=async (req, res) => {
+  try {
+    const id = req.params.id;
+    const session = req.session.user_id;
+    const userData = await User.findById({_id:session})
+    const orderData = await Order.findOne({_id:id}).populate('products.productId');
+   
+    const date = new Date()
+   
+     data = {
+      order:orderData,
+      user:userData,
+      date,
+    }
+    
+
+    const filepathName = path.resolve(__dirname, '../views/users/invoice.ejs');
+   
+    const html = fs.readFileSync(filepathName).toString();
+    console.log(html,"//////////////////////////////////////////////");
+    const ejsData = ejs.render(html, data);
+    
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
+    await page.setContent(ejsData, { waitUntil: 'networkidle0' });
+    const pdfBytes = await page.pdf({ format: 'Letter' });
+    await browser.close();
+
+   
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename= order invoice.pdf');
+    res.send(pdfBytes);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('An error occurred');
+  }
+};
+
+// const Invoice=async(req,res)=>{
+// try {
+//   const session = req.session.user_id;
+//     const userData = await User.findById({_id:session})
+//   const orderData = await Order.findOne();
+//   const date = new Date()
+   
+//      data = {
+//       order:orderData,
+//       user:userData,
+//       date,
+//     }
+
+//   res.render('invoice',{order:orderData,user:userData,date:date})
+// } catch (error) {
+//   console.log(error.message);
+// }
+// }
 
 
 
@@ -319,5 +395,7 @@ module.exports = {
   loaduserOrders,
   loadViewSingleUser,
   returnOrder,
-  CancelOrder
+  CancelOrder,
+  loadInvoice,
+ // Invoice
 };

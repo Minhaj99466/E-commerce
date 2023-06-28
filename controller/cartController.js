@@ -6,7 +6,7 @@ const Address = require("../model/addressModel");
 
 //=================== LOAD CART ======================//
 
-const loadCart = async (req, res,next) => {
+const loadCart = async (req, res, next) => {
   try {
     let id = req.session.user_id;
     const session = req.session.user_id;
@@ -33,7 +33,7 @@ const loadCart = async (req, res,next) => {
             },
           ]);
           const Total = total.length > 0 ? total[0].total : 0;
-          const totalAmount = Total + 80;
+          const totalAmount = Total ;
           const userId = userName._id;
           const userData = await User.find({});
           res.render("cart", {
@@ -62,23 +62,19 @@ const loadCart = async (req, res,next) => {
       res.redirect("/login");
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //====================== ADD TO CART ==================//
 
-
-const addToCart = async (req, res,next) => {
+const addToCart = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({ _id: userId });
     const proId = req.body.id;
-    const productData = await Product.findOne({ _id: proId })
-
-   
+    const productData = await Product.findOne({ _id: proId });
     const productQuantity = productData.quantity;
-  
     const cartData = await Cart.findOneAndUpdate(
       { userId: userId },
       {
@@ -90,23 +86,19 @@ const addToCart = async (req, res,next) => {
       },
       { upsert: true, new: true }
     );
-
-
-
-    const updatedProduct = cartData.products.find((product) => product.productId === proId);
-    console.log(updatedProduct);
- 
+    const updatedProduct = cartData.products.find(
+      (product) => product.productId === proId
+    );
     const updatedQuantity = updatedProduct ? updatedProduct.count : 0;
-
     if (updatedQuantity + 1 > productQuantity) {
       return res.json({
         success: false,
         message: "Quantity limit reached!",
       });
     }
-
-    const cartProduct = cartData.products.find((products) => products.productId === proId);
-
+    const cartProduct = cartData.products.find(
+      (products) => products.productId === proId
+    );
     if (cartProduct) {
       await Cart.updateOne(
         { userId: userId, "products.productId": proId },
@@ -128,37 +120,37 @@ const addToCart = async (req, res,next) => {
 
     res.json({ success: true });
   } catch (error) {
-    next(error)
+    next(error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
-
 //================== INCREASE + AND DECREASING - THE COUNT OF THE PRODUCT =====================//
 
-
-const changeProductCount = async (req, res,next) => {
+const changeProductCount = async (req, res, next) => {
   try {
     const userData = req.session.user_id;
     const proId = req.body.product;
     let count = req.body.count;
     count = parseInt(count);
     const cartData = await Cart.findOne({ userId: userData });
-    const product = cartData.products.find((product) => product.productId === proId);
+    const product = cartData.products.find(
+      (product) => product.productId === proId
+    );
+   
     const productData = await Product.findOne({ _id: proId });
-    
-    const productQuantity = productData.quantity
-    
+    const productQuantity = productData.quantity;
 
     const updatedCartData = await Cart.findOne({ userId: userData });
-    const updatedProduct = updatedCartData.products.find((product) => product.productId === proId);
+    const updatedProduct = updatedCartData.products.find(
+      (product) => product.productId === proId
+    );
     const updatedQuantity = updatedProduct.count;
-    
-    
+
     if (count > 0) {
       // Quantity is being increased
       if (updatedQuantity + count > productQuantity) {
-        res.json({ success: false, message: 'Quantity limit reached!' });
+        res.json({ success: false, message: "Quantity limit reached!" });
         return;
       }
     } else if (count < 0) {
@@ -172,33 +164,34 @@ const changeProductCount = async (req, res,next) => {
         return;
       }
     }
-    
+
     const cartdata = await Cart.updateOne(
       { userId: userData, "products.productId": proId },
       { $inc: { "products.$.count": count } }
     );
-    
+
     const updateCartData = await Cart.findOne({ userId: userData });
-    const updateProduct = updateCartData.products.find((product) => product.productId === proId);
+    const updateProduct = updateCartData.products.find(
+      (product) => product.productId === proId
+    );
     const updateQuantity = updateProduct.count;
     const price = updateQuantity * productData.price;
-    
+
     await Cart.updateOne(
       { userId: userData, "products.productId": proId },
       { $set: { "products.$.totalPrice": price } }
     );
-    
+
     res.json({ success: true });
-    
   } catch (error) {
-    next(error)
+    next(error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
 //======================= LOAD CART =====================//
 
-const loadEmptyCart = async (req, res,next) => {
+const loadEmptyCart = async (req, res, next) => {
   try {
     const session = req.session.user_id;
 
@@ -214,23 +207,23 @@ const loadEmptyCart = async (req, res,next) => {
       return res.render("emptyCart", { session });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //=================== EMPTY CHECKOUT ==================== //
 
-const emptyCheckout = async (req, res,next) => {
+const emptyCheckout = async (req, res, next) => {
   try {
     res.render("emptyCheckout");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //===================== LOAD CHECKOUT ======================//
 
-const loadCheckout = async (req, res,next) => {
+const loadCheckout = async (req, res, next) => {
   try {
     const session = req.session.user_id;
     const userData = await User.findOne({ _id: req.session.user_id });
@@ -253,7 +246,7 @@ const loadCheckout = async (req, res,next) => {
         if (addressData.addresses.length > 0) {
           const address = addressData.addresses;
           const Total = total.length > 0 ? total[0].total : 0;
-          const totalAmount = Total + 80;
+          const totalAmount = Total ;
           res.render("checkout", {
             session,
             Total,
@@ -279,13 +272,13 @@ const loadCheckout = async (req, res,next) => {
       res.redirect("/");
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //===================== DELETE CART ================= //
 
-const deletecart = async (req, res,next) => {
+const deletecart = async (req, res, next) => {
   try {
     const userData = req.session.user_id;
     const proId = req.body.product;
@@ -301,7 +294,7 @@ const deletecart = async (req, res,next) => {
     }
     res.json({ success: true });
   } catch (error) {
-    next(error)
+    next(error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
