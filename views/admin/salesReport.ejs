@@ -13,18 +13,25 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <h4 >SALES REPORT</h4>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        choose
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="/admin/salesReportsort/<%=1%>">Day</a>
-                        <a class="dropdown-item" href="/admin/salesReportsort/<%=7%>">week</a>
-                        <a class="dropdown-item" href="/admin/salesReportsort/<%=30%>">month</a>
-                        <a class="dropdown-item" href="/admin/salesReportsort/<%=365%>">year</a>
-                      </div>
+                    <form action="/admin/salesReportSort" method="post">
+                   <div class=" d-flex mx">
+                   
+                    <div class="mx-3" >
+                      <h4>From</h4>
+                      <input type="date" name="fromDate">
                     </div>
+                    <div>
+                      <h4>To</h4>
+                      <input type="date" name="toDate">
+                    </div>
+                   
                     
+                  </div>
+                  <div class="d-flex justify-content-end pt-2">
+                    <button class="btn btn-primary" type="submit" >submit</button>
+                  </div>
+                </form>
+
                 </div>
             </div>
         </div>

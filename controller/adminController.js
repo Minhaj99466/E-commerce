@@ -262,17 +262,17 @@ const loadSalesReport=async(req,res,next)=>{
 const sortReport = async (req, res) => {
   try {
     const adminData = await User.findById({ _id: req.session.auser_id });
-    const id = parseInt(req.params.id);
-    const from = new Date();
-    const to = new Date(from.getTime() - id * 24 * 60 * 60 * 1000);
+    const from =req.body.fromDate
+    const to =req.body.toDate
+   
     
     const order = await Order.aggregate([
       { $unwind: "$products" },
       {$match: {
         'products.status': 'Delivered',
         $and: [
-          { 'products.deliveryDate': { $gt: to } },
-          { 'products.deliveryDate': { $lt: from } }
+          { 'products.deliveryDate': { $gt:new Date(from) } },
+          { 'products.deliveryDate': { $lt: new Date(to)} }
         ]
       }},
       { $sort: { date: -1 } },

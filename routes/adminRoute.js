@@ -59,7 +59,7 @@ adminRoute.get("/vieworder/:id",auth.isLogin,orderController.loadSingleOrder)
 adminRoute.post("/updateStatus",auth.isLogin,orderController.changeStatus)
 
 adminRoute.get("/salesReport",auth.isLogin,adminController.loadSalesReport)
-adminRoute.get('/salesReportSort/:id',auth.isLogin,adminController.sortReport)
+adminRoute.post('/salesReportSort',auth.isLogin,adminController.sortReport)
 
 adminRoute.post('/addOffer',productController.addOffer);
 
