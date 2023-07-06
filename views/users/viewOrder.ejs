@@ -16,9 +16,21 @@
                 <span>Payment Method :<span class="font-weight-bold"><%= orders.paymentMethod %> </span></span><br>
                 <span> Order Id:</span><span class="font-weight-bold"> <%= orders._id %></span></span><br>
                 <span>Address :</span><span class="font-weight-bold"><%= orders.deliveryAddress %></span></span><br>
-                <span class="pt-3 d-flex justify-content-end">
-                    <a href="/invoiceDownload/<%= orders._id %> " class="btn btn-outline-primary-2">Invoice Downlode</a>
-                </span>
+
+                <% let ne = false; %>
+<% if (orders.products.length > 0) { %>
+    <% orders.products.forEach((order) => { %>
+        <% if (order.status === 'Delivered') { %>
+            <% ne = true; %>
+        <% } %>
+    <% }) %>
+<% } %>
+
+<% if (ne) { %>
+    <div class="pt-3 d-flex justify-content-end">
+        <a href="/invoiceDownload/<%= orders._id %>" class="btn btn-outline-primary-2">Invoice Download</a>
+    </div>
+<% } %>
              </div>
         </div>
         
@@ -51,9 +63,23 @@
                                <% if(order.status == 'cancelled' ) {%> 
                                      <p class="text-danger">cancelled</p>
                                 <% }else if (order.status == 'Delivered'){ %>
+                                    <%
+                                    const todayDate = new Date();
+                                    const expiryDate = new Date(order.deliveredDate);
+                                    expiryDate.setDate(expiryDate.getDate() + 7);
+                                    const dateDiff = expiryDate.getTime() - todayDate.getTime();
+                                    const daysDiff = Math.ceil(dateDiff / (1000 * 60 * 60 * 24));
+                                    %>
+
+                                    <% if (todayDate >= expiryDate) { %>
+                                    <p>Return Expired</p>
+                                    <% } else { %>
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#returnModal-<%= order._id %>" >Return</button>
-                                    <% }else if (order.status == 'Product Returned'){ %>
+
+                                    <%} }else if (order.status == 'Product Returned'){ %>
                                         <p class="text-success">Product Returned</p>
+                                    <% }else if (order.status == 'waiting for approval'){ %>
+                                        <p class="text-success">waiting for approval Returned</p>
                                  <%  }else if( order.status == 'out for delivery'){%> 
                                     <p class="text-success">out for delivery</p>
                                     <% }else{ %>

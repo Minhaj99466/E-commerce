@@ -139,17 +139,16 @@
                                             </div><!-- End .product-cat -->
                                             <h3 class="product-title"><a href="product.html"> <%= product[i].productName %> </a></h3><!-- End .product-title -->
                                             <% 
-                                
+                                            
+                                            const expiryDate = new Date(product[i].expiryDate);
+                                            const currentDate = new Date(); 
                                             const discount =  product[i].discountPercentage; 
-                    
                                             const price =  product[i].price 
-                    
                                             const discountAmount = Math.round((price*discount)/100)
-                    
                                             const total = price - discountAmount
 
                                         %>
-                                        <% if(discountAmount <= 0) {%>
+                                        <% if(expiryDate < currentDate ||discountAmount <= 0) {%>
                                             ₹<%= product[i].price %>.00
                                         <% }else{ %>
                                             <del class="text-danger">₹<%= product[i].price %>.00</del>

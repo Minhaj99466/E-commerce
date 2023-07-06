@@ -39,6 +39,9 @@ const productschema=mongoose.Schema({
     discountName:{
         type:String,
     },
+    expiryDate:{
+        type:String,
+    }
 })
 
 module.exports=mongoose.model('product',productschema)

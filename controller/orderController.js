@@ -254,7 +254,7 @@ const returnOrder = async(req,res) =>{
       },
       {
         $set: {
-          'products.$.status': 'Product Returned',
+          'products.$.status': 'waiting for approval',
           'products.$.returnReason': reason
         }
       },
@@ -268,6 +268,55 @@ const returnOrder = async(req,res) =>{
       res.redirect("/vieworder/" + ordersId)
     }else{
        res.redirect("/vieworder/" + ordersId)
+    }
+   
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+// ================== RETURN ORDER ==================
+
+const returnOrderApproval = async(req,res) =>{
+  try {
+    const ordersId = req.body.ordersid;
+    const Id = req.body.userId
+    console.log(Id);
+    const id = req.body.orderid;
+    const reason = req.body.reason
+    const userData = await User.findById(Id)
+    const orderData = await Order.findOne({ userId: Id, 'products._id': id})
+    const product = orderData.products.find((Product) => Product._id.toString() === id);
+    const returnAmount = product.totalPrice
+    const proCount = product.count
+    const proId = product.productId 
+    
+    const updatedOrder = await Order.findOneAndUpdate(
+      {
+        userId: Id,
+        'products._id': id
+      },
+      {
+        $set: {
+          'products.$.status': 'Product Returned',
+          'products.$.returnReason': reason
+        }
+      },
+      { new: true }
+    );
+
+    if(updatedOrder){
+
+      await Product.findByIdAndUpdate({_id:proId},{$inc:{StockQuantity:proCount}})
+      await User.findByIdAndUpdate({_id:Id},{$inc:{wallet:returnAmount}})
+      await Order.findByIdAndUpdate({_id:ordersId},{$inc:{
+        totalAmount:-returnAmount
+        }})
+      console.log("sdghjghjghjghkhjklhjklghjkljkl");
+      res.redirect("/admin/orders")
+    }else{
+       res.redirect("/admin/orders" )
     }
    
 
@@ -398,4 +447,5 @@ module.exports = {
   CancelOrder,
   loadInvoice,
  // Invoice
+ returnOrderApproval
 };

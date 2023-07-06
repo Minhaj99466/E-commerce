@@ -29,6 +29,7 @@
               <thead>
                 <tr>
                   <th>No</th>
+                  <th>userId</th>
                   <th>Image</th>
                   <th>Product</th>
                   <th>price</th>
@@ -42,6 +43,7 @@
                         %>        
                     <tr>                   
                       <td><%= i+1 %></td>           
+                      <td><%=  orders.userId %></td>           
                       <td class="product-col">
                           <div class="product">
                               <figure class="product-media">
@@ -62,11 +64,13 @@
                       <%  if(order.status == 'cancelled' ){%>
                         <a type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelReasonmodal-<%= order._id %>" > view Reason </a>
   
-                        <%  }else if (order.status == 'Product Returned' ){%>
+                        <%  }else if (order.status == 'waiting for approval' ){%>
                          
                           <a type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#returnReasonmodal-<%= order._id %>" > view Reason </a>
                           <%  }else if (order.status == 'Delivered' ){%>
                      <p class="text-success">Delivered</p>
+                          <%  }else if (order.status == 'Product Returned' ){%>
+                     <p class="text-danger">Product Returned</p>
                           <% }else{ %>
                      <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuOutlineButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> ACTIONS </button>
@@ -83,9 +87,10 @@
   
   <div class="modal fade" id="returnReasonmodal-<%= order._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/cancelOrder" method="post">
+        <form action="/admin/returnOrderApproval" method="post">
             <input type="hidden" value="<%= order._id %>" name="orderid">
             <input type="hidden" value="<%= orders._id %>" name="ordersid">
+            <input type="hidden" value="<%= orders.userId%>" name="userId">
            
       <div class="modal-content">
         <div class="modal-header">
@@ -98,6 +103,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">close</button>
+          <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">confirm</button>
           
         </div>
       </div>

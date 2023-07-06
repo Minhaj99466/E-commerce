@@ -181,11 +181,16 @@ const changeProductCount = async (req, res, next) => {
       (product) => product.productId === proId
     );
     const updateQuantity = updateProduct.count;
-    const price = updateQuantity * productData.price;
+
+    const discount =  productData.discountPercentage;          
+    const price =  productData.price 
+    const discountAmount = Math.round((price*discount)/100)
+    const total = price - discountAmount
+    const prices = updateQuantity * total;
 
     await Cart.updateOne(
       { userId: userData, "products.productId": proId },
-      { $set: { "products.$.totalPrice": price } }
+      { $set: { "products.$.totalPrice": prices } }
     );
 
     res.json({ success: true });
@@ -217,15 +222,7 @@ const loadEmptyCart = async (req, res, next) => {
   }
 };
 
-//=================== EMPTY CHECKOUT ==================== //
 
-const emptyCheckout = async (req, res, next) => {
-  try {
-    res.render("emptyCheckout");
-  } catch (error) {
-    next(error);
-  }
-};
 
 //===================== LOAD CHECKOUT ======================//
 
@@ -261,17 +258,28 @@ const loadCheckout = async (req, res, next) => {
             user: userData,
           });
         } else {
-          res.render("emptyCheckout", {
+          const address = addressData.addresses;
+          const Total = total.length > 0 ? total[0].total : 0;
+          const totalAmount = Total ;
+          res.render("checkout", {
+            
             session,
+            Total,
+            address,
+            totalAmount,
             user: userData,
-            message: "Add your delivery address",
           });
         }
       } else {
-        res.render("emptyCheckout", {
+        const address = addressData.addresses;
+        const Total = total.length > 0 ? total[0].total : 0;
+        const totalAmount = Total ;
+        res.render("checkout", {
           session,
-          user: userData,
-          message: "Add your delivery address",
+            Total,
+            address,
+            totalAmount,
+            user: userData,
         });
       }
     } else {
@@ -311,6 +319,5 @@ module.exports = {
   changeProductCount,
   loadEmptyCart,
   loadCheckout,
-  emptyCheckout,
   deletecart,
 };

@@ -66,6 +66,9 @@ const insertProduct = async (req, res,next) => {
       quantity: req.body.quantity.trim(),
       productImage: images,
       price: req.body.price.trim(),
+      discountName:req.body.discountName.trim(),
+      discountPercentage:req.body.discountPercentage.trim(),
+      expiryDate: req.body.expiryDate.trim()
     });
 
     console.log(product);
@@ -126,7 +129,8 @@ const updateProduct = async (req, res,next) => {
     req.body.quantity.trim() === "" ||
     req.body.price.trim() === "" ||
     req.body.discountName.trim() === "" ||
-    req.body.discountPercentage.trim() === ""
+    req.body.discountPercentage.trim() === "" ||
+     req.body.expiryDate.trim() === ""
   ) {
     const id = req.params.id;
     const productData = await Product.findOne({ _id: id }).populate("categoryName");
@@ -156,7 +160,8 @@ const updateProduct = async (req, res,next) => {
             description: req.body.description,
             brand: req.body.brand,
             discountPercentage:req.body.discountPercentage,
-            discountName:req.body.discountName,            
+            discountName:req.body.discountName,      
+            expiryDate: req.body.expiryDate
           },
         }
       );
@@ -239,17 +244,34 @@ const addOffer = async(req,res,next)=>{
       const productId = req.body.id
       const discountPercentage = req.body.discountPercentage
       const discountName = req.body.discountName
-      const updateProduct = await Product.findOneAndUpdate(
-          { _id: productId },
-          {
-            $set: {
-              discountName: discountName,
-              discountPercentage: discountPercentage
-            }
-          },
-          { new: true }
-        );  
-        console.log(updateProduct);
+      const expiryDate = new Date(req.body.expiryDate)
+     
+        if (expiryDate < new Date()) {
+          await Product.findOneAndUpdate(
+            { _id: productId },
+            {
+              $set: {
+                discountName: null,
+                discountPercentage: 0,
+                expiryDate:null
+              }
+            },
+            { new: true }
+          );  
+        }else{
+          const updateProduct = await Product.findOneAndUpdate(
+            { _id: productId },
+            {
+              $set: {
+                discountName: discountName,
+                discountPercentage: discountPercentage,
+                expiryDate:expiryDate
+              }
+            },
+            { new: true }
+          );  
+        }
+       
        res.redirect("/admin/productList");  
 
   } catch (error) {

@@ -75,7 +75,14 @@
                                                         </ul>
                                                 </div><!-- End .card-dashboard -->
                                         </div>
-                                        <% }) } %>   
+                                        <% }) }else{ %>
+                                          <div class="col-lg-12">
+                                            <div >
+                                                <h3 class="text-center mt-5" > [Add a Address]</h3>
+                                            </div>
+                                          
+                                    </div><!-- End .col-lg-12 -->
+                                    <%}%>   
                                     </div><!-- End .col-lg-12 -->
                                 </div><!-- End .row -->
                             </div><!-- End .col-lg-9 -->
@@ -127,11 +134,16 @@
                                           </div><!-- End .accordion -->
 
                                    
-
+                                          <%if(address.length>0){%>
                                     <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
                                         <span class="btn-text">Place Order</span>
                                         <span class="btn-hover-text">Place Order</span>
                                     </button>
+                                    <%}else{%>
+                                      <button onclick="addAddress()" class="btn btn-outline-primary-2 btn-order btn-block">
+                                        <span class="btn-text">Place Order</span>
+                                        <span class="btn-hover-text">Place Order</span>
+                                      <%}%>
                                     </a>
                                 </div><!-- End .summary -->
                             </aside><!-- End .col-lg-3 -->
@@ -291,6 +303,16 @@ function verifyPayment(payment,order){
                 }
               });
             }
+
+            function addAddress(){
+          swal.fire({
+            positon: 'center',
+            icon: "error",
+            title: 'please add address',
+            showConfirmButton: false,
+            timer:1500,
+        })
+        }
           </script>
 
         

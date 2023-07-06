@@ -55,7 +55,22 @@
                             </td>
                            
                             <td class="price ms-5">
-                                <h5>₹<%=wish.productId.price%></h5>
+                               <% 
+                                            
+                                            const expiryDate = new Date(wish.productId.expiryDate);
+                                            const currentDate = new Date(); 
+                                            const discount =  wish.productId.discountPercentage; 
+                                            const price =  wish.productId.price 
+                                            const discountAmount = Math.round((price*discount)/100)
+                                            const total = price - discountAmount
+
+                                        %>
+                                        <% if(expiryDate < currentDate ||discountAmount <= 0) {%>
+                                            ₹<%= wish.productId.price %>.00
+                                        <% }else{ %>
+                                            <del class="text-danger">₹<%= wish.productId.price %>.00</del>
+                                            ₹<%= total %>.00
+                                        <% } %>
                            
                             </td>
                             

@@ -83,21 +83,16 @@ input.btpos {
                                                 </td>
                                                 <td > <% 
                                 
-                                                    const discount =  products.discountPercentage; 
+                                                  
                             
-                                                    const price =  products.price 
+                                                    const price =  products.productPrice 
                             
-                                                    const discountAmount = Math.round((price*discount)/100)
-                            
-                                                    const total = price - discountAmount
+                                                   
         
                                                 %>
-                                                <% if(discountAmount <= 0) {%>
-                                                    ₹<%= products.productId.price %>.00
-                                                <% }else{ %>
-                                                    <del class="text-danger">₹ <%= products.productId.price %>.00</del>
-                                                    ₹ <%= products.totalPrice %>.00
-                                                <% } %><!-- End .product-price --></td>
+                                              
+                                                    ₹<%= price %>.00
+                                               
                                                 <td class="quantity-col">
                                                     <div class="cart-product-quantity">
                                                         <input type="button" onclick="changeQuantity('<%=userId%>','<%=products.productId._id%>',-1)" class="btneg " value="-">

@@ -10,7 +10,7 @@
                              <table class="table table-cart table-mobile">
                                  <thead>
                                      <tr>
-                                       
+                                      <% if(orders.length > 0){  %>
                                        <th>   </th>
                                        <th>Order ID</th>
                                        <th>Order Date</th>
@@ -18,13 +18,14 @@
                                        <th>Payment</th>
                                        <!-- <th>Status</th> -->
                                        <th>action</th>
+                                       <%}%>
                                      </tr>
                                  </thead>
                                 
                                  <tbody>
-                                   <% if(orders.length > 0){
-                                     orders.forEach((order)=>{
-                                       %>
+                                  <% if(orders.length > 0){
+                                    orders.forEach((order)=>{
+                                      %> 
                                        <tr>
                                        <td>
                                          

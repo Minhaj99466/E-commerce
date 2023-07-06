@@ -8,6 +8,8 @@ const Category = require("../model/categoryModel");
 const nodeMailer = require("nodemailer");
 const randomstring = require("randomstring");
 const Address = require("../model/addressModel");
+const Banner = require('../model/bannerModel')
+const passwordValidator = require('password-validator');
 let otp;
 let email;
 let otp3;
@@ -62,17 +64,18 @@ const verifyLogin = async (req, res,next) => {
 
 const loadHome = async (req, res,next) => {
   try {
+    const banners=await Banner.find()
     const session = req.session.user_id;
     if (!session) {
-      return res.render("home", { session: session });
+      return res.render("home", {banners, session: session });
     }
     const userData = await User.findById({ _id: req.session.user_id });
 
     if (userData) {
-      return res.render("home", { user: userData, session });
+      return res.render("home", { banners,user: userData, session });
     } else {
       const session = null;
-      return res.render("home", { session });
+      return res.render("home", { banners,session });
     }
   } catch (error) {
     next(error)
@@ -100,39 +103,58 @@ const loadRegister = async (req, res,next) => {
 };
 
 //============================= USER REGISTER SAVE/INSERT USER ========================//
+const schema = new passwordValidator();
+schema
+  .is().min(8)
+  .is().max(16)
+  .has().uppercase()
+  .has().lowercase()
+  .has().digits(1)
+  .has().not().spaces();
 
 const insertUser = async (req, res,next) => {
   try {
-    const spassword = await securePassword(req.body.password);
+    const password=req.body.password
+    const spassword = await securePassword(password);
 
-    const user = new User({
-      name: req.body.name,
-      email: req.body.email,
-      mobile: req.body.mobile,
-      password: spassword,
-      is_admin: 0,
-    });
-
-    email = user.email;
-    const name = req.body.name;
-
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      res.render("register", { message: "email already registered" });
-    } else {
-      const userData = await user.save();
-      if (userData) {
-        randomnumber = Math.floor(Math.random() * 9000) + 1000;
-        otp = randomnumber;
-
-        sendverifyMail(name, req.body.email, randomnumber);
-        res.redirect("/verification");
+    if(password && schema.validate(password)){
+      const user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        mobile: req.body.mobile,
+        password: spassword,
+        is_admin: 0,
+      });
+  
+      email = user.email;
+      const name = req.body.name;
+  
+      const existingUser = await User.findOne({ email: req.body.email });
+      if (existingUser) {
+        res.render("register", { message: "email already registered" });
       } else {
-        res.render("register", {
-          message: "your registeration has been failled",
-        });
+        const userData = await user.save();
+        if (userData) {
+          randomnumber = Math.floor(Math.random() * 9000) + 1000;
+          otp = randomnumber;
+  
+          sendverifyMail(name, req.body.email, randomnumber);
+          res.redirect("/verification");
+        } else {
+          res.render("register", {
+            message: "your registeration has been failled",
+          });
+        }
       }
-    }
+    }else{
+        // Password does not meet the requirements
+        return res.render('register', {
+          message:
+            'Your password must be like :Joseph@123',
+    })
+  }
+
+   
   } catch (error) {
     next(error)
   }

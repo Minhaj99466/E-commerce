@@ -158,13 +158,14 @@ margin-top:20px;
 						   <tbody>
 							<% if (order.products.length > 0) {
 								order.products.forEach((orders,i) => { %>
+									<% if(orders.status == 'Delivered' ) {%> 
 							   <tr>
 								   <td class="col-md-9"><%= i + 1 %></td>
 								   <td class="col-md-9"><%=orders.productId.productName %></td>
 								   <td class="col-md-9"><%= orders.count%></td>
 								   <td class="col-md-9"><%= orders.productPrice%></td>
 								   <td class="col-md-9">₹ <%= orders.totalPrice%>.00</td>
-								   <% });
+								   <% }})
                                  } %>
 								   
 								   <tr>

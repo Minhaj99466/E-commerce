@@ -223,10 +223,11 @@ const unblock = async (req, res, next) => {
 
 const loadSalesReport=async(req,res,next)=>{
   try {
+     console.log(req.query.id);
     const adminData = await User.findById(req.session.auser_id);  
     const order = await Order.aggregate([
       { $unwind: "$products" },
-      { $match: { 'products.status': 'Delivered' } },
+     { $match: { 'products.status': {$nin: ['Product Returned', 'waiting for approval'] } }},
       { $sort: { date: -1 } },
       {
         $lookup: {
@@ -245,15 +246,7 @@ const loadSalesReport=async(req,res,next)=>{
       }
     ]);
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = 4;
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const orderCount = order.length;
-    const totalPages = Math.ceil(orderCount / limit);
-    const paginatedOrder = order.slice(startIndex, endIndex);
-
-    res.render('salesReport',{admin:adminData,order:paginatedOrder,activePage:'salesReport',currentPage:page,totalPages})
+    res.render('salesReport',{admin:adminData,order})
   } catch (error) {
     console.log(error);
   }
@@ -261,18 +254,19 @@ const loadSalesReport=async(req,res,next)=>{
 
 const sortReport = async (req, res) => {
   try {
+    console.log("sdgvshafdghfwaghesdfghsevdfghuwef");
     const adminData = await User.findById({ _id: req.session.auser_id });
     const from =req.body.fromDate
     const to =req.body.toDate
    
+   
     
     const order = await Order.aggregate([
       { $unwind: "$products" },
-      {$match: {
-        'products.status': 'Delivered',
+      {$match: { 'products.status': { $ne: 'Product Returned'  },
         $and: [
-          { 'products.deliveryDate': { $gt:new Date(from) } },
-          { 'products.deliveryDate': { $lt: new Date(to)} }
+          { 'date': { $gt:new Date(from) } },
+          { 'date': { $lt: new Date(to)} }
         ]
       }},
       { $sort: { date: -1 } },
@@ -302,6 +296,49 @@ const sortReport = async (req, res) => {
 }
 
 
+const sortReportFilter = async (req, res) => {
+  try {
+    
+    const adminData = await User.findById({ _id: req.session.auser_id });
+    var status=req.params.id
+    console.log(status,"dxfcgh");
+   
+    
+    const order = await Order.aggregate([
+      { $unwind: "$products" },
+      {
+        $match: {
+          'products.status': status // Filter based on the product status
+        }
+      },
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+          from: 'products',
+          let: { productId: { $toObjectId: '$products.productId' } },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } }
+          ],
+          as: 'products.productDetails'
+        }
+      },  
+      {
+        $addFields: {
+          'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
+        }
+      }
+    ]);
+    console.log(order)
+
+    res.render("salesReport", { order ,admin:adminData });
+   
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+
 module.exports = {
   loadLogin,
   verifyLogin,
@@ -311,5 +348,6 @@ module.exports = {
   block,
   unblock,
   loadSalesReport,
-  sortReport
+  sortReport,
+  sortReportFilter
 };

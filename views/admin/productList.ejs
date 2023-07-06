@@ -140,6 +140,11 @@
               <input type="text" class="form-control" id="recipient-name" name="discountPercentage">
               <input type="hidden" name="id" value="<%= product[i]._id %>">
             </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">expiryDate of Offer</label>
+              <input type="date" class="form-control" id="expiry-date-<%= product[i]._id %>" name="expiryDate" onchange="validateExpiryDate('expiry-date-<%= product[i]._id %>')">
+              <input type="hidden" name="id" value="<%= product[i]._id %>">
+            </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
               <button type="submit" class="btn btn-primary">Submit</button>
@@ -151,5 +156,17 @@
   </div>
 <% } %>
 
-
+<script>
+  function validateExpiryDate(productId) {
+    var selectedDate = document.getElementById(productId).value;
+    var currentDate = new Date().toISOString().split('T')[0];
+    
+    if (selectedDate < currentDate) {
+      alert("Expiry date cannot be less than the current date.");
+      return false;
+    }
+    
+    
+  }
+</script>
       <%- include('../adminLayout/footer.ejs') %>

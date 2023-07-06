@@ -63,7 +63,7 @@ userRoute.post('/changeQuantity',auth.isLogin,cartController.changeProductCount)
 
 userRoute.get('/emptyCart',auth.isLogin,cartController.loadEmptyCart)
 
-userRoute.get('/emptyCheckout',auth.isLogin,cartController.emptyCheckout)
+
 userRoute.get('/checkout',auth.isLogin,cartController.loadCheckout)
 userRoute.post('/checkout',orderController.placeOrder)
 userRoute.post('/verifyPayment',orderController.verifyPayment);
@@ -87,6 +87,7 @@ userRoute.get('/priceSort/:id',userController.priceSort)
 
 userRoute.get('/viewOrder/:id',auth.isLogin,orderController.loadViewSingleUser)
 userRoute.post('/returnOrder',auth.isLogin,orderController.returnOrder)
+
 userRoute.post('/cancelOrder',auth.isLogin,orderController.CancelOrder);
 
 //userRoute.get('/invoice',auth.isLogin,orderController.Invoice)
