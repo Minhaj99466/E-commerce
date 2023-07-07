@@ -3,6 +3,7 @@ const User = require("../model/userModel");
 const Product = require("../model/productModel");
 const Cart = require("../model/cartModel");
 const Address = require("../model/addressModel");
+const Coupon= require('../model/couponModel')
 
 //=================== LOAD CART ======================//
 
@@ -229,6 +230,7 @@ const loadEmptyCart = async (req, res, next) => {
 const loadCheckout = async (req, res, next) => {
   try {
     const session = req.session.user_id;
+    const couponData = await Coupon.find({})
     const userData = await User.findOne({ _id: req.session.user_id });
     const addressData = await Address.findOne({ userId: req.session.user_id });
     const total = await Cart.aggregate([
@@ -251,6 +253,7 @@ const loadCheckout = async (req, res, next) => {
           const Total = total.length > 0 ? total[0].total : 0;
           const totalAmount = Total ;
           res.render("checkout", {
+            coupons:couponData,
             session,
             Total,
             address,
@@ -262,7 +265,7 @@ const loadCheckout = async (req, res, next) => {
           const Total = total.length > 0 ? total[0].total : 0;
           const totalAmount = Total ;
           res.render("checkout", {
-            
+            coupons:couponData,
             session,
             Total,
             address,
@@ -271,13 +274,13 @@ const loadCheckout = async (req, res, next) => {
           });
         }
       } else {
-        const address = addressData.addresses;
         const Total = total.length > 0 ? total[0].total : 0;
         const totalAmount = Total ;
         res.render("checkout", {
+          coupons:couponData,
           session,
             Total,
-            address,
+            address:[],
             totalAmount,
             user: userData,
         });

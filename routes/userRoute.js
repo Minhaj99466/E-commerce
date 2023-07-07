@@ -6,6 +6,7 @@ const cartController=require('../controller/cartController')
 const addressController=require('../controller/addressController')
 const wishlistController=require('../controller/wishlistController')
 const orderController=require('../controller/orderController')
+const couponController=require('../controller/couponController')
 const auth= require('../middleware/auth')
 const errorHandler=require('../middleware/errorHandler')
 
@@ -94,6 +95,9 @@ userRoute.post('/cancelOrder',auth.isLogin,orderController.CancelOrder);
 
 //---------------- INVOICE DOWNLODING ROUTE SECTION START
 userRoute.get('/invoiceDownload/:id',orderController.loadInvoice);
+
+
+userRoute.post('/applyCoupon',couponController.applyCoupon)
 
 
 

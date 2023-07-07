@@ -84,10 +84,11 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form action="/admin/category" method="post">
+              <form action="/admin/category" method="post"  id="form">
                 <div class="mb-3">
                   <label for="recipient-name" class="col-form-label">Category Name</label>
-                  <input type="text" class="form-control" id="recipient-name" name="name">
+                  <input type="text" class="form-control" id="category" name="name">
+                  <span class="text-danger" id="category-error"></span>
                 </div>
 
 
@@ -103,6 +104,27 @@
         </div>
       </div>
       <!-- Category editing modal section -->
+
+      <script>
+        const form = document.getElementById("form");
+        const categoryInput = document.getElementById("category");
+        
+      
+        const categoryError = document.getElementById("category-error");
+       
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+      
+          const categoryValue = categoryInput.value.trim();
+          if (!categoryValue) {
+            categoryError.textContent = "Please enter a category name";
+            return;
+          } else {
+            categoryError.textContent = "";
+          }
+          form.submit();
+        });
+      </script>
 
 
 

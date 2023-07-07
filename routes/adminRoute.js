@@ -7,6 +7,7 @@ const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController");
 const orderController=require("../controller/orderController")
 const bannerController=require('../controller/bannerController')
+const couponController=require('../controller/couponController')
 const multer = require("multer");
 const update = require("../config/multconfig");
 
@@ -74,6 +75,12 @@ adminRoute.post("/addbanner",update.upload.single('image'),auth.isLogin,bannerCo
 adminRoute.post('/editBanner',update.upload.single('image'),auth.isLogin, bannerController.editBanner);
 
 adminRoute.post('/addOffer',productController.addOffer);
+
+//---------------- COUPONLIST ROUTE SECTION START
+adminRoute.get('/couponList',auth.isLogin,couponController.loadCopon);
+adminRoute.post('/addCoupon',couponController.addCoupon);
+adminRoute.post('/editCoupon/:id',couponController.editCoupon);
+adminRoute.post('/deleteCoupon',auth.isLogin,couponController.deleteCoupon);
 
 adminRoute.get("*", function (req, res) {
   res.redirect("/admin");

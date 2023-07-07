@@ -18,11 +18,78 @@
                 <div class="checkout">
                     <div class="container">
                         <div class="checkout-discount">
-                            <form action="" id="">
-                                <input type="text" class="form-control" required id="checkout-discount-input">
-                                <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click
-                                        here to enter your code</span></label>
+                          <div class="checkout-discount">
+            				
+        						
+							
+                            <a   data-bs-toggle="modal" class="btn btn-primary" data-bs-target="#addCouponModal">View Avilable Coupons</a>
+              
+                           <!-- Modal -->
+                <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">COUPONS</h5>
+                        
+                      </div>
+                      <div class="modal-body">
+                          
+                             <% if(coupons .length > 0){
+                      coupons.forEach((coupon) => { %>
+              
+                      
+                    
+                    <div class="container my-5" >
+                      <div class="d-flex coulmn">
+                        <div class="col-lg-6">
+                          <div class="coupon bg-white">
+                            <div class="row no-gutters">
+                              <div class="col-lg-4 border-right d-flex flex-column justify-content-center">
+                                <div class="d-flex flex-column align-items-center ">
+                                  <img src="/userAssets/images/brands/2.png" style="width: 50px;">
+                                  <!-- <span class="d-block">PH TIMES</span> -->
+                                  <!-- <span class="text-black-50">Shoes</span> -->
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div>
+                                  <div class="d-flex flex-row justify-content-end off">
+                                    <h2><%= coupon.discountPercentage %>%</h2>
+                                    <span>OFF</span>
+                                  </div>
+                                  <div class="d-flex flex-row justify-content-between off px-3 p-2">
+                                    <span>Promo code:</span>
+                                    <a onclick="copyCode('<%= coupon.code %>')"><span class="border border-success px-3 rounded code"><%= coupon.code %> | COPY</span></a>
+                                  </div>
+                                  <div class="d-flex flex-row justify-content-between off px-3 p-2">
+                                    <span>Purchase Above</span>
+                                    <span class=" px-3"><%= coupon.criteria %> Rupees</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              
+              
+                    <% })
+                    } %>
+              
+                              <button type="button" class="btn btn-dark  m-5	" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                      </div> 
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End .checkout-discount -->
+              
+                                <div class="checkout-discount">
+                                  <form action="" >
+                                  <input type="text" class="form-control" placeholder="Click here to enter your code" required id="code">
+                                  <a onclick="applycoupon($('#code').val())" type="Submit" class="btn btn-outline-danger">APPLY COUPON</a>
                             </form>
+                             </div>
                         </div><!-- End .checkout-discount -->
                         <form action="#" id="checkout-form" >
                             <div class="row">
@@ -103,6 +170,10 @@
                                             <tr>
                                                 <td>Shipping:</td>
                                                 <td>₹ 0.00</td>
+                                            </tr>
+                                            <tr>
+                                              <td >Discount:</td>
+                                              <td>₹ <span id="discount">.00</span></td>
                                             </tr>
                                             <tr class="summary-total">
                                                 <td>Total:</td>
@@ -313,6 +384,65 @@ function verifyPayment(payment,order){
             timer:1500,
         })
         }
+
+        // COPY COUPON CODE
+
+function copyCode(code) {
+          navigator.clipboard.writeText(code)
+          .then(function() {
+             alert('Coupon code copied to clipboard!');
+          })
+         .catch(function() {
+             alert('Failed to copy coupon code.');
+      });
+      }
+
+      // COUPON APPLY
+      function applycoupon(code){
+    event.preventDefault();
+    const amount = document.getElementById('total').innerHTML;
+    $.ajax({
+      method:'post',
+      url:'/applyCoupon',
+      data:{
+        amount:amount,
+        code:code,
+      },success:(response)=>{
+        if(response.user){
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'This coupon already used!'
+          })
+        }else if(response.date){
+          console.log("coupon date expired");
+          Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'date expired!!!'
+              })
+        }else if(response.amountOkey){
+          document.getElementById('discount').innerHTML = response.disAmount
+          document.getElementById('total').innerHTML = response.disTotal
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Discount redeemed',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }else if(response.invalid){
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Invalid Coupon!!!'
+          })
+        }
+      }
+    });
+  }
+
+
           </script>
 
         

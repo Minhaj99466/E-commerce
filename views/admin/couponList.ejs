@@ -1,0 +1,209 @@
+<%- include('../adminLayout/header.ejs') %>
+
+  <%- include('../adminLayout/sidebar.ejs') %>
+
+    <%- include('../adminLayout/navbar.ejs') %>
+
+<div class="main-panel">
+    <div class="content-wrapper">
+
+
+<div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                        <h3>coupon</h3><span><div class="d-flex justify-content-end">
+<button type="button" class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#addCouponModal">ADD COUPON</button>
+  </div></span>
+
+
+                      
+
+
+                        <!-- Button trigger modal -->
+                        
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">ADD COUPON</h5>
+          
+        </div>
+        <div class="modal-body">
+            <form action="/admin/addCoupon" method="post" class="forms-sample">
+                <div class="form-group">
+                  <label for="exampleInputUsername1">Coupon Name</label>
+                  <input type="text" class="form-control"  placeholder="Coupon Name" name="discountType">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Coupon Code</label>
+                  <input type="text" class="form-control"  placeholder="Coupon Code" name="couponCode">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Discount Percentage</label>
+                  <input type="text" class="form-control"  placeholder="Discount Percentage" name="discountPercentage">
+                </div>
+               
+                
+
+                
+
+
+                <div class="form-group">
+                  <label for="exampleInputConfirmPassword1">Start Date</label>
+                  <input type="date" class="form-control" name="startDate" >
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputConfirmPassword1">Expiry Date</label>
+                  <input type="date" class="form-control" name="expiryDate">
+                </div>
+               
+                <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+              </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Coupon List</h4>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Coupon Name</th>
+                          <th>Code</th>
+                          <th>Discount %</th>
+                          <th>Start Date</th>
+                          <th>Expiry Date</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if(coupons.length > 0){ 
+                                coupons.forEach((coupon) => { %>
+                        <tr>
+                            
+
+                          <td><%= coupon.
+                            discountType
+                             %></td>
+                          <td><%= coupon.code %></td>
+                          <td><%= coupon.discountPercentage %> %</td>
+                          <td><%= coupon.startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).replace(/\//g, '-') %> </td>
+                          <td><%= coupon.expiryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).replace(/\//g, '-') %> </td>
+                          <td class="d-flex flex-column">
+                            <button type="button" class="btn btn-outline-primary "  data-bs-toggle="modal" data-bs-target="#editCouponModal-<%= coupon._id %>">EDIT</button>
+                            <br>
+                          <a onclick="deleteCoupon('<%= coupon._id %>')" type="button" class="btn btn-outline-danger">DELETE</a></td>
+                          
+                          
+                          <div class="modal fade" id="editCouponModal-<%= coupon._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">EDIT COUPON</h5>
+                                  
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/admin/editCoupon/<%= coupon._id %>" method="post" class="forms-sample">
+                                        <div class="form-group">
+                                          <label for="exampleInputUsername1">Coupon Name</label>
+                                          <input type="text" class="form-control"  value="<%= coupon.discountType %>" name="couponName">
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="exampleInputEmail1">Coupon Code</label>
+                                          <input type="text" class="form-control"  value="<%= coupon.code %>" name="couponCode">
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="exampleInputPassword1">Discount Percentage</label>
+                                          <input type="text" class="form-control"  value="<%= coupon.discountPercentage %>" name="discountPercentage">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                          <label for="exampleInputConfirmPassword1">Start Date</label>
+                                          <input type="date" class="form-control" value="<%= coupon.startDate.toISOString().split('T')[0]%>" name="startDate" >
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="exampleInputConfirmPassword1">Expiry Date</label>
+                                          <input type="date" class="form-control" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" name="expDate">
+                                        </div>
+                                       
+                                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                        
+                                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                      </form>
+                                </div>
+                                
+                              </div>
+                            </div>
+                          </div>                                                  
+                        </tr>
+
+                        <%  }) %>                        
+                          <% }else{ %>
+                      </tbody>
+                      </table>
+                        <h4 class="d-flex justify-content-center my-5 text-danger">NO COUPONS AVAILABLE</h4>
+                        <% }%>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+</div>
+</div>
+<script>
+
+function deleteCoupon(id) {
+   
+Swal.fire({
+    title: 'Are you sure?',
+    text: "You want to Delete Coupon !",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete!'
+}).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+            url: "/admin/deleteCoupon",
+            data: {
+                id: id
+            },
+            method: 'post',
+            success: (response) => {
+                location.reload();
+            },
+            error: (error) => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while deleting the item.',
+                    icon: 'error',
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
+});
+}
+
+</script>
+<%- include('../adminLayout/footer.ejs') %>

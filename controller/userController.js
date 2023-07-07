@@ -341,9 +341,13 @@ const loadUserProfile = async (req, res,next) => {
       userId: req.session.user_id,
     });
     const userData = await User.findById({ _id: req.session.user_id });
-    const address = addressDetails.addresses;
-
-    res.render("userProfile", { session: session, address, user: userData });
+   
+    if(addressDetails){
+      const address = addressDetails.addresses;
+      res.render("userProfile", { session: session, address, user: userData });
+    }else{
+      res.render("userProfile", { session: session, address:[], user: userData });
+    }
   } catch (error) {
     next(error)
   }

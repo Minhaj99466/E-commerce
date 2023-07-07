@@ -6,13 +6,14 @@
       <div class="" style="padding-top: 100px" align-items-center>
         <h1>EDIT CATEGORY</h1>
 
-        <form class="forms-sample" method="post" action="">
+        <form class="" method="post" action="" id="form">
           <div class="form-group">
             <label for="exampleInputName1">CATEGORY NAME</label>
             <% if (category) { %>
-              <input type="hidden" name="id" value="<%= category._id %>">
-              <input type="text" class="form-control" id="exampleInputName1" name="categoryName"
+              <input type="hidden" name="id"  value="<%= category._id %>">
+              <input type="text" class="form-control"  name="categoryName" id="category"
                 value="<%= category.categoryName %>">
+                <span class="text-danger" id="category-error"></span>
               <% } %>
           </div>
 
@@ -20,5 +21,32 @@
           <a class="btn btn-dark" href="/admin/category">Cancel</a>
         </form>
       </div>
+
+
+
+
+
+
+
+      <script>
+        const form = document.getElementById("form");
+        const categoryInput = document.getElementById("category");
+        
+      
+        const categoryError = document.getElementById("category-error");
+       
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+      
+          const categoryValue = categoryInput.value.trim();
+          if (!categoryValue) {
+            categoryError.textContent = "Please enter a category name";
+            return;
+          } else {
+            categoryError.textContent = "";
+          }
+          form.submit();
+        });
+      </script>
 
       <%- include('../adminLayout/footer.ejs') %>

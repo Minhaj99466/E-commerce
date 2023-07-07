@@ -10,9 +10,13 @@ const loadAddress = async (req, res,next) => {
       userId: req.session.user_id,
     });
     const userData = await User.findById({ _id: req.session.user_id });
-    const address = addressDetails.addresses;
-
-    res.render("address", { session: session, address, user: userData });
+   
+    if(addressDetails){
+      const address = addressDetails.addresses;
+      res.render("address", { session: session, address, user: userData });
+    }else{
+      res.render("address", { session: session, address:[], user: userData });
+    }
   } catch (error) {
     next(error)
   }
