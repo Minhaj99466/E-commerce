@@ -45,13 +45,15 @@ const wishListLoad = async (req, res,next) => {
     try {
       const session = req.session.user_id;
       const wishlistData = await Wishlist.find({ user: session }).populate('products.productId');
+      const userData = await User.findById({ _id: req.session.user_id });
+
       if (wishlistData.length > 0) {
         const wishlist = wishlistData[0].products;
    
         const products = wishlist.map(wish => wish.productId);
-        res.render('wishList', {user:session, session, wishlist, products });
+        res.render('wishList', {user:session, session, wishlist, products,user: userData });
       } else {
-        res.render('wishList', { user:session,session, wishlist: [], products: [] });
+        res.render('wishList', { user:session,session, wishlist: [], products: [],user: userData });
       }
     } catch (error) {
       next(error)

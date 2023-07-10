@@ -27,9 +27,7 @@
                     <div class="col-lg-9">
                         <div class="toolbox">
                             <div class="toolbox-left">
-                                <div class="toolbox-info">
-                                    Showing <span>1 of 1</span> Products
-                                </div><!-- End .toolbox-info -->
+                               
                             </div><!-- End .toolbox-left -->
 
                             <div class="toolbox-right">
@@ -116,8 +114,7 @@
                                             <% 
                                            } %>
                                                 
-                                                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-                                                <a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
+                                               
                                             </div><!-- End .product-action-vertical -->
 
                                             <div class="product-action">
@@ -135,9 +132,9 @@
 
                                         <div class="product-body">
                                             <div class="product-cat">
-                                                <a href="#"> <%= product[i].categoryName  %> </a>
+                                                <a href="/singleProduct/<%= product[i]._id %>"> <%= product[i].categoryName  %> </a>
                                             </div><!-- End .product-cat -->
-                                            <h3 class="product-title"><a href="product.html"> <%= product[i].productName %> </a></h3><!-- End .product-title -->
+                                            <h3 class="product-title"><a href="/singleProduct/<%= product[i]._id %>"> <%= product[i].productName %> </a></h3><!-- End .product-title -->
                                             <% 
                                             
                                             const expiryDate = new Date(product[i].expiryDate);
@@ -230,69 +227,6 @@
                                 </div><!-- End .collapse -->
                             </div><!-- End .widget -->
 
-                            <!-- <div class="widget widget-collapsible">
-                                <h3 class="widget-title">
-                                    <a data-toggle="collapse" href="#widget-2" role="button" aria-expanded="true" aria-controls="widget-2">
-                                        Size
-                                    </a>
-                                </h3><!-- End .widget-title 
-
-                                <div class="collapse show" id="widget-2">
-                                    <div class="widget-body">
-                                        <div class="filter-items">
-                                            <div class="filter-item">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="size-1">
-                                                    <label class="custom-control-label" for="size-1">5</label>
-                                                </div><!-- End .custom-checkbox -->
-                                            <!-- </div>End .filter-item 
-
-                                            <div class="filter-item">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="size-2">
-                                                    <label class="custom-control-label" for="size-2">4</label>
-                                                </div><!-- End .custom-checkbox -->
-                                            <!-- </div>End .filter-item 
-
-                                          
-
-                                            <div class="filter-item">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="size-5">
-                                                    <label class="custom-control-label" for="size-5">3</label>
-                                                </div><!-- End .custom-checkbox -->
-                                            <!-- </div>End .filter-item 
-
-                                            <div class="filter-item">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="size-6">
-                                                    <label class="custom-control-label" for="size-6">2</label>
-                                                </div><!-- End .custom-checkbox -->
-                                            <!-- </div>End .filter-item -->
-                                        <!-- </div>End .filter-items -->
-                                    <!-- </div>End .widget-body -->
-                                <!-- </div>End .collapse -->
-                            <!-- </div><-End .widget --> 
-
-                            <!-- <div class="widget widget-collapsible">
-                                <h3 class="widget-title">
-                                    <a data-toggle="collapse" href="#widget-3" role="button" aria-expanded="true" aria-controls="widget-3">
-                                        Colour
-                                    </a>
-                                </h3> End .widget-title 
-
-                                <div class="collapse show" id="widget-3">
-                                    <div class="widget-body">
-                                        <div class="filter-colors">
-                                            <a href="#" style="background: #b87145;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #f0c04a;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #333333;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" class="selected" style="background: #cc3333;"><span class="sr-only">Color Name</span></a>
-                                           
-                                        </div> End .filter-colors -->
-                                    <!-- </div>End .widget-body -->
-                                <!-- </div>End .collapse
-                            </div>!--End .widget -->
 
                             <div class="widget widget-collapsible">
                                 <h3 class="widget-title">

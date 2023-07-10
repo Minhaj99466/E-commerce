@@ -66,14 +66,11 @@ adminRoute.get('/salesReportSort/:id',auth.isLogin,adminController.sortReportFil
 
 adminRoute.post('/returnOrderApproval',auth.isLogin,orderController.returnOrderApproval)
 
-//========== BANNER MANAGEMENT ==============
+//========== BANNER MANAGEMENT and OFFER==============
 
 adminRoute.get("/banner",auth.isLogin,bannerController.loadBannerManagement)
 adminRoute.post("/addbanner",update.upload.single('image'),auth.isLogin,bannerController.addBanner)
-
-
 adminRoute.post('/editBanner',update.upload.single('image'),auth.isLogin, bannerController.editBanner);
-
 adminRoute.post('/addOffer',productController.addOffer);
 
 //---------------- COUPONLIST ROUTE SECTION START
