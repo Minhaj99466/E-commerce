@@ -83,11 +83,11 @@
                           </td>
                           <td><%= banner.heading %></td>
                           <td>
-                            <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#editBannerModal">EDIT</button>
+                            <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#editBannerModal-<%= banner._id %>">EDIT</button>Z
                           </td>
                         </tr>
                         <!-- Edit Banner Modal -->
-                        <div class="modal fade" id="editBannerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="editBannerModal-<%= banner._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                           <!-- Edit Banner Modal content -->
                           <div class="modal-dialog">
                             <div class="modal-content">

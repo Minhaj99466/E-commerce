@@ -248,11 +248,11 @@ const loadSalesReport=async(req,res,next)=>{
 
     res.render('salesReport',{admin:adminData,order})
   } catch (error) {
-    console.log(error);
+    next(error)
   }
 }
 
-const sortReport = async (req, res) => {
+const sortReport = async (req, res,next) => {
   try {
     console.log("sdgvshafdghfwaghesdfghsevdfghuwef");
     const adminData = await User.findById({ _id: req.session.auser_id });
@@ -291,12 +291,12 @@ const sortReport = async (req, res) => {
     res.render("salesReport", { order ,admin:adminData });
    
   } catch (error) {
-    console.log(error.message);
+    next(error)
   }
 }
 
 
-const sortReportFilter = async (req, res) => {
+const sortReportFilter = async (req, res,next) => {
   try {
     
     const adminData = await User.findById({ _id: req.session.auser_id });
@@ -333,7 +333,7 @@ const sortReportFilter = async (req, res) => {
     res.render("salesReport", { order ,admin:adminData });
    
   } catch (error) {
-    console.log(error.message);
+    next(error)
   }
 }
 

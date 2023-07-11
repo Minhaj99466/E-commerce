@@ -14,12 +14,13 @@
                             <div class="card-body">
                               <h4 class="card-title">EDIT PRODUCT</h4>
                               
-                              <form class="form-sample" action="" method="post" enctype="multipart/form-data" >
+                              <form class="form-sample" action="/admin/editProduct" method="post" enctype="multipart/form-data" >
                                 
                                 <div class="row">
                                   <div class="col-md-6">
                                     <div class="form-group row">
                                       <label class="col-sm-3 col-form-label">Product Name</label>
+                                      <input type="hidden" name="id" value="<%=products._id%>">
                                       <div class="col-sm-9">
                                         <input type="text" class="form-control" name="productName" value="<%= products.productName %>"/>
                                       </div>
@@ -34,6 +35,7 @@
                                   <label class="col-sm-3 col-form-label">brand</label>
                                   <div class="col-sm-9">
                                     <select class="form-control" name="brand" >
+                                      <option ><%=products.brand%></option>
                                       <option>Puma</option>
                                       <option>Nike</option>
                                       <option>Nivia</option>
@@ -85,7 +87,8 @@
                                       <label class="col-sm-3 col-form-label">Category</label>
                                       <div class="col-sm-9">
                                         <select class="form-control" name="categoryName">
-                                           
+                                          <option ><%=products.categoryName%></option>
+
                                             <%
                          for(let i=0;i<category.length;i++){
                           %>

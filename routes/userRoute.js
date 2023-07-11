@@ -99,6 +99,8 @@ userRoute.get('/invoiceDownload/:id',orderController.loadInvoice);
 
 userRoute.post('/applyCoupon',couponController.applyCoupon)
 
+userRoute.get('/about',userController.loadAbout)
+
 
 
 

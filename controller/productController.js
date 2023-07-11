@@ -121,18 +121,14 @@ const editProduct = async (req, res,next) => {
 //====================== UPDATE EDIT PRODUCT ====================== //
 
 const updateProduct = async (req, res,next) => {
+  console.log("fghfghfghjfghfghghfghfgh");
   if (
     req.body.productName.trim() === "" ||
-    req.body.brand.trim() === "" ||
-    req.body.categoryName.trim() === "" ||
     req.body.description.trim() === "" ||
     req.body.quantity.trim() === "" ||
-    req.body.price.trim() === "" ||
-    req.body.discountName.trim() === "" ||
-    req.body.discountPercentage.trim() === "" ||
-     req.body.expiryDate.trim() === ""
+    req.body.price.trim() === "" 
   ) {
-    const id = req.params.id;
+    const id = req.body.id;
     const productData = await Product.findOne({ _id: id }).populate("categoryName");
     const categoryData = Category.find();
     const adminData = await User.findById({ _id: req.session.auser_id });
@@ -148,7 +144,8 @@ const updateProduct = async (req, res,next) => {
       for (file of req.files) {
         arrayimg.push(file.filename);
       }
-      const id = req.params.id;
+      const id = req.body.id;
+      console.log(id+"dftdfdfdfdfgdfghdfghdfghdfghdfghdfghdfgh");
       await Product.updateOne(
         { _id: id },
         {
@@ -275,7 +272,7 @@ const addOffer = async(req,res,next)=>{
        res.redirect("/admin/productList");  
 
   } catch (error) {
-      
+    next(error)
   }
 }
  

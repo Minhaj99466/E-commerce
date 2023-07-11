@@ -53,7 +53,7 @@ adminRoute.get("/editProduct/:id", auth.isLogin, productController.editProduct);
 adminRoute.get('/deleteimg/:imgid/:prodid',auth.isLogin,productController.deleteimage);
 
 adminRoute.post('/addproduct',update.upload.array('image',10),productController.insertProduct);
-adminRoute.post('/editProduct/:id',update.upload.array('image',10),productController.updateProduct)
+adminRoute.post('/editProduct',update.upload.array('image',10),productController.updateProduct)
 adminRoute.post("/editProduct/updateimage/:id",update.upload.array('image'),productController.updateimage)
 
 adminRoute.get("/orders",auth.isLogin,orderController.loadAdminOrders)

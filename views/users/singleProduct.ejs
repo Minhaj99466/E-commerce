@@ -118,20 +118,31 @@
                                             <input type="number" id="qty" class="form-control" value="1" min="1"
                                                 max="10" step="1" data-decimals="0" required>
                                         </div>End .product-details-quantity -->
-                                        <% if(product[0].quantity<=0){ %>
-                                            <button class="btn-product btn-cart">Out of Stock</button>
-                                            <% }else{ %>
-                                                <a onclick="addToCart('<%= product[0]._id %>')"
-                                                    class="btn-product btn-cart"><span>add to cart</span></a>
-                                                <% } %>
+                                        
+                                                <% if(session!=null){
+                                                    %>
+                                                <a onclick="addToCart('<%= product[0]._id %>')" class="btn-product btn-cart"><span>add to cart</span></a>
+                                                
+                                           <%  }else{
+                                            %>
+                                            <a onclick="plzlogin( )" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <% 
+                                           } %>
                                     </div><!-- End .details-action-col -->
 
                                     <div class="details-action-wrapper">
-                                        <a onclick="show('<%=product[0]._id%>')" class="btn-product btn-wishlist"
+                                                <% if(session!=null){
+                                                    %>
+                                                    <a onclick="show('<%=product[0]._id%>')" class="btn-product btn-wishlist"
+                                                        title="Wishlist"><span>Add to
+                                                            Wishlist</span></a>
+                                           <%  }else{
+                                            %>
+                                            <a onclick="plzlogin()"  class="btn-product btn-wishlist"
                                             title="Wishlist"><span>Add to
                                                 Wishlist</span></a>
-                                        <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to
-                                                Compare</span></a>
+                                            <% 
+                                           } %>
                                     </div><!-- End .details-action-wrapper -->
                                 </div><!-- End .product-details-action -->
 
@@ -248,6 +259,22 @@
                     }
                 })
             }
+
+            function plzlogin() {
+        $.ajax({
+            success: (response) => {
+                swal.fire({
+                    position: 'top',
+                    title: '! Please Login To Your Account',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                        popup: 'my-swal-class',
+                    },
+                });
+            }
+        });
+    }
 
         </script>
 

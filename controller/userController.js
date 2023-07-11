@@ -243,7 +243,7 @@ const loadVerification = async (req, res,next) => {
   try {
     res.render("verification");
   } catch (error) {
-    console.log(error.message);
+    next(error)
   }
 };
 
@@ -319,12 +319,13 @@ const verifyEmail = async (req, res,next) => {
         { email: email },
         { $set: { is_verified: true } }
       );
+      req.session.user_id = userData._id;
       if (userData) {
-        res.redirect("/login");
+        res.redirect("/home");
       } else {
         res.render("verification", { message: "please check the otp again" });
       }
-    } else {
+    } else {``
       res.render("verification", { message: "please check the otp again" });
     }
   } catch (error) {
@@ -540,6 +541,15 @@ const priceSort=async(req,res,next)=>{
   }
 }
 
+const loadAbout=async(req,res)=>{
+  try {
+    const session=req.session.user_id
+    res.render('about',{session})
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 
 
 module.exports = {
@@ -558,6 +568,7 @@ module.exports = {
   loadForget,
   forgetVerify,
   changePassword,
+  loadAbout,
 
   verifyForgetOtp,
   loadChangePassword,
