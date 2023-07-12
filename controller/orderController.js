@@ -6,7 +6,10 @@ const Cart = require("../model/cartModel");
 const razorpay = require("razorpay");
 const path = require("path");
 const fs = require("fs");
-const pdf = require("html-pdf");
+// const pdf = require("html-pdf");
+// const PDFDocument = require('pdfkit');
+const puppeteer=require('puppeteer')
+
 const ejs = require("ejs");
 
 var instance = new razorpay({
@@ -414,58 +417,41 @@ const CancelOrder = async (req, res, next) => {
   }
 };
 
-const loadInvoice = async (req, res, next) => {
+
+const loadInvoice=async (req, res) => {
   try {
     const id = req.params.id;
     const session = req.session.user_id;
-    const userData = await User.findById(session);
-    const orderData = await Order.findOne({ _id: id }).populate('products.productId');
-
-    if (!userData || !orderData) {
-      return res.status(404).send('Invoice not found');
-    }
-
-    const date = new Date();
-
-    const data = {
-      order: orderData,
-      user: userData,
+    const userData = await User.findById({_id:session})
+    const orderData = await Order.findOne({_id:id}).populate('products.productId');
+   
+    const date = new Date()
+   
+     data = {
+      order:orderData,
+      user:userData,
       date,
-    };
+    }
+    
 
-    // Render the EJS template to HTML
-    const invoiceHTML = await ejs.renderFile(
-      path.resolve(__dirname, '../views/users/invoice.ejs'),
-      data
-    );
+    const filepathName = path.resolve(__dirname, '../views/users/invoice.ejs');
+   
+    const html = fs.readFileSync(filepathName).toString();
+    const ejsData = ejs.render(html, data);
+    
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
+    await page.setContent(ejsData, { waitUntil: 'networkidle0' });
+    const pdfBytes = await page.pdf({ format: 'Letter' });
+    await browser.close();
 
-    // PDF options
-    const options = {
-      format: 'Letter',
-      border: {
-        top: '1in',
-        right: '0.5in',
-        bottom: '1in',
-        left: '0.5in',
-      },
-    };
+   
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename= order invoice.pdf');
+    res.send(pdfBytes);
 
-    // Generate PDF from HTML using html-pdf package
-    pdf.create(invoiceHTML, options).toStream((err, stream) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('An error occurred');
-      }
-
-      // Set response headers for the PDF file
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename=order_invoice.pdf');
-
-      // Pipe the PDF stream to the response
-      stream.pipe(res);
-    });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).send('An error occurred');
   }
 };
