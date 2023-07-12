@@ -3,28 +3,28 @@ const Address = require("../model/addressModel");
 
 //===========LOAD ADDRESS=============//
 
-const loadAddress = async (req, res,next) => {
+const loadAddress = async (req, res, next) => {
   try {
     const session = req.session.user_id;
     const addressDetails = await Address.findOne({
       userId: req.session.user_id,
     });
     const userData = await User.findById({ _id: req.session.user_id });
-   
-    if(addressDetails){
+
+    if (addressDetails) {
       const address = addressDetails.addresses;
       res.render("address", { session: session, address, user: userData });
-    }else{
-      res.render("address", { session: session, address:[], user: userData });
+    } else {
+      res.render("address", { session: session, address: [], user: userData });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //============LOAD ADD ADDRESS=========//
 
-const loadaddAddress = async (req, res,next) => {
+const loadaddAddress = async (req, res, next) => {
   try {
     const userData = await User.findOne({ _id: req.session.user_id });
     const session = req.session.user_id;
@@ -34,13 +34,13 @@ const loadaddAddress = async (req, res,next) => {
       redirect("/");
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //============= ADDRESS INSERTING SECTION===========//
 
-const insertAddress = async (req, res,next) => {
+const insertAddress = async (req, res, next) => {
   try {
     const addressDetails = await Address.findOne({
       userId: req.session.user_id,
@@ -95,13 +95,13 @@ const insertAddress = async (req, res,next) => {
       }
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //============= DELETE ADDRESS ============ //
 
-const deleteAddress = async (req, res,next) => {
+const deleteAddress = async (req, res, next) => {
   try {
     const id = req.body.id;
 
@@ -111,13 +111,13 @@ const deleteAddress = async (req, res,next) => {
     );
     res.json({ remove: true });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //=============== LOAD EDIT ADDRESS ============= //
 
-const loadEditAddress = async (req, res,next) => {
+const loadEditAddress = async (req, res, next) => {
   try {
     const id = req.query.id;
     const session = req.session.user_id;
@@ -133,13 +133,13 @@ const loadEditAddress = async (req, res,next) => {
       user: user,
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //================ UPDATE ADDRESS ============  //
 
-const updateAddress = async (req, res,next) => {
+const updateAddress = async (req, res, next) => {
   try {
     const session = req.session.user_id;
     const id = req.query.id;
@@ -168,7 +168,7 @@ const updateAddress = async (req, res,next) => {
     );
     res.redirect("/checkout");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 

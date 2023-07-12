@@ -3,7 +3,7 @@ const User = require("../model/userModel");
 const Product = require("../model/productModel");
 const Cart = require("../model/cartModel");
 const Address = require("../model/addressModel");
-const Coupon= require('../model/couponModel')
+const Coupon = require("../model/couponModel");
 
 //=================== LOAD CART ======================//
 
@@ -34,7 +34,7 @@ const loadCart = async (req, res, next) => {
             },
           ]);
           const Total = total.length > 0 ? total[0].total : 0;
-          const totalAmount = Total ;
+          const totalAmount = Total;
           const userId = userName._id;
           const userData = await User.find({});
           res.render("cart", {
@@ -101,10 +101,10 @@ const addToCart = async (req, res, next) => {
       (products) => products.productId === proId
     );
 
-    const discount =  productData.discountPercentage;          
-    const price =  productData.price 
-    const discountAmount = Math.round((price*discount)/100)
-    const total = price - discountAmount
+    const discount = productData.discountPercentage;
+    const price = productData.price;
+    const discountAmount = Math.round((price * discount) / 100);
+    const total = price - discountAmount;
 
     if (cartProduct) {
       await Cart.updateOne(
@@ -119,7 +119,7 @@ const addToCart = async (req, res, next) => {
     } else {
       cartData.products.push({
         productId: proId,
-        productPrice:total,
+        productPrice: total,
         totalPrice: total,
       });
       await cartData.save();
@@ -144,7 +144,7 @@ const changeProductCount = async (req, res, next) => {
     const product = cartData.products.find(
       (product) => product.productId === proId
     );
-   
+
     const productData = await Product.findOne({ _id: proId });
     const productQuantity = productData.quantity;
 
@@ -183,10 +183,10 @@ const changeProductCount = async (req, res, next) => {
     );
     const updateQuantity = updateProduct.count;
 
-    const discount =  productData.discountPercentage;          
-    const price =  productData.price 
-    const discountAmount = Math.round((price*discount)/100)
-    const total = price - discountAmount
+    const discount = productData.discountPercentage;
+    const price = productData.price;
+    const discountAmount = Math.round((price * discount) / 100);
+    const total = price - discountAmount;
     const prices = updateQuantity * total;
 
     await Cart.updateOne(
@@ -223,14 +223,12 @@ const loadEmptyCart = async (req, res, next) => {
   }
 };
 
-
-
 //===================== LOAD CHECKOUT ======================//
 
 const loadCheckout = async (req, res, next) => {
   try {
     const session = req.session.user_id;
-    const couponData = await Coupon.find({})
+    const couponData = await Coupon.find({});
     const userData = await User.findOne({ _id: req.session.user_id });
     const addressData = await Address.findOne({ userId: req.session.user_id });
     const total = await Cart.aggregate([
@@ -251,9 +249,9 @@ const loadCheckout = async (req, res, next) => {
         if (addressData.addresses.length > 0) {
           const address = addressData.addresses;
           const Total = total.length > 0 ? total[0].total : 0;
-          const totalAmount = Total ;
+          const totalAmount = Total;
           res.render("checkout", {
-            coupons:couponData,
+            coupons: couponData,
             session,
             Total,
             address,
@@ -263,9 +261,9 @@ const loadCheckout = async (req, res, next) => {
         } else {
           const address = addressData.addresses;
           const Total = total.length > 0 ? total[0].total : 0;
-          const totalAmount = Total ;
+          const totalAmount = Total;
           res.render("checkout", {
-            coupons:couponData,
+            coupons: couponData,
             session,
             Total,
             address,
@@ -275,14 +273,14 @@ const loadCheckout = async (req, res, next) => {
         }
       } else {
         const Total = total.length > 0 ? total[0].total : 0;
-        const totalAmount = Total ;
+        const totalAmount = Total;
         res.render("checkout", {
-          coupons:couponData,
+          coupons: couponData,
           session,
-            Total,
-            address:[],
-            totalAmount,
-            user: userData,
+          Total,
+          address: [],
+          totalAmount,
+          user: userData,
         });
       }
     } else {

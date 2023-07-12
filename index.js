@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-
 const session=require('express-session')
-
 const morgan = require("morgan");
 const errorHandler=require('./middleware/errorHandler')
 const express = require("express");
@@ -38,12 +36,15 @@ app.use(express.json())
 const userRoute = require("./routes/userRoute");
 app.use("/", userRoute);
 
+// for admin route
 
 const adminRoute = require("./routes/adminRoute");
 app.use("/admin", adminRoute);
 
+// error handler
+
 app.use(errorHandler)
 
 app.listen(process.env.port, (req, res) => {
-  console.log("server is loading 3004");
+  console.log("server is loading ");
 });

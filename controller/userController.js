@@ -8,15 +8,14 @@ const Category = require("../model/categoryModel");
 const nodeMailer = require("nodemailer");
 const randomstring = require("randomstring");
 const Address = require("../model/addressModel");
-const Banner = require('../model/bannerModel')
-const passwordValidator = require('password-validator');
+const Banner = require("../model/bannerModel");
+const passwordValidator = require("password-validator");
 let otp;
 let email;
 let otp3;
 let emalreset;
 
 //======================= PASSWORD SECURING =====================//
-
 
 const securePassword = async (password) => {
   try {
@@ -29,7 +28,7 @@ const securePassword = async (password) => {
 
 //======================== VERIFY LOGIN =========================//
 
-const verifyLogin = async (req, res,next) => {
+const verifyLogin = async (req, res, next) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
@@ -56,68 +55,75 @@ const verifyLogin = async (req, res,next) => {
       res.render("login", { message: "email and password is incorrect" });
     }
   } catch (error) {
-   next(error)
+    next(error);
   }
 };
 
 //=========================== LOAD HOME ==============================//
 
-const loadHome = async (req, res,next) => {
+const loadHome = async (req, res, next) => {
   try {
-    const banners=await Banner.find()
+    const banners = await Banner.find();
     const session = req.session.user_id;
     if (!session) {
-      return res.render("home", {banners, session: session });
+      return res.render("home", { banners, session: session });
     }
     const userData = await User.findById({ _id: req.session.user_id });
 
     if (userData) {
-      return res.render("home", { banners,user: userData, session });
+      return res.render("home", { banners, user: userData, session });
     } else {
       const session = null;
-      return res.render("home", { banners,session });
+      return res.render("home", { banners, session });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //============================  LOGIN PAGE LOAD ========================//
 
-const loadLogin = async (req, res,next) => {
+const loadLogin = async (req, res, next) => {
   try {
     res.render("login");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //============================= REGISTRATION PAGE LOAD ==================//
 
-const loadRegister = async (req, res,next) => {
+const loadRegister = async (req, res, next) => {
   try {
     res.render("register");
   } catch {
-    next(error)
+    next(error);
   }
 };
 
 //============================= USER REGISTER SAVE/INSERT USER ========================//
 const schema = new passwordValidator();
 schema
-  .is().min(8)
-  .is().max(16)
-  .has().uppercase()
-  .has().lowercase()
-  .has().digits(1)
-  .has().not().spaces();
+  .is()
+  .min(8)
+  .is()
+  .max(16)
+  .has()
+  .uppercase()
+  .has()
+  .lowercase()
+  .has()
+  .digits(1)
+  .has()
+  .not()
+  .spaces();
 
-const insertUser = async (req, res,next) => {
+const insertUser = async (req, res, next) => {
   try {
-    const password=req.body.password
+    const password = req.body.password;
     const spassword = await securePassword(password);
 
-    if(password && schema.validate(password)){
+    if (password && schema.validate(password)) {
       const user = new User({
         name: req.body.name,
         email: req.body.email,
@@ -125,10 +131,10 @@ const insertUser = async (req, res,next) => {
         password: spassword,
         is_admin: 0,
       });
-  
+
       email = user.email;
       const name = req.body.name;
-  
+
       const existingUser = await User.findOne({ email: req.body.email });
       if (existingUser) {
         res.render("register", { message: "email already registered" });
@@ -137,7 +143,7 @@ const insertUser = async (req, res,next) => {
         if (userData) {
           randomnumber = Math.floor(Math.random() * 9000) + 1000;
           otp = randomnumber;
-  
+
           sendverifyMail(name, req.body.email, randomnumber);
           res.redirect("/verification");
         } else {
@@ -146,110 +152,116 @@ const insertUser = async (req, res,next) => {
           });
         }
       }
-    }else{
-        // Password does not meet the requirements
-        return res.render('register', {
-          message:
-            'Your password must be like :Joseph@123',
-    })
-  }
-
-   
+    } else {
+      // Password does not meet the requirements
+      return res.render("register", {
+        message: "Your password must be like :Joseph@123",
+      });
+    }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //======================================== USER LOGOUT =============================//
 
-const userLogout = async (req, res,next) => {
+const userLogout = async (req, res, next) => {
   try {
     req.session.destroy();
     res.redirect("/");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-
-
 //============================ LOAD SHOP ====================================//
 
-
-
-const loadShop = async (req,res,next)=>{
+const loadShop = async (req, res, next) => {
   try {
-     var search = '';
-    if(req.query.search){
+    var search = "";
+    if (req.query.search) {
       search = req.query.search;
     }
 
     var page = 1;
-    if(req.query.page){ 
+    if (req.query.page) {
       page = req.query.page;
     }
 
     const limit = 6;
-    
+
     const session = req.session.user_id;
-    const productData = await Product.find({is_delete:false,
-        $or:[
-          {productName:{$regex:'.*'+search+'.*',$options:'i'}},
-          {categoryName:{$regex:'.*'+search+'.*',$options:'i'}},
-          // {description:{$regex:'.*'+search+'.*',$options:'i'}},
-        ]
-      })
+    const productData = await Product.find({
+      is_delete: false,
+      $or: [
+        { productName: { $regex: ".*" + search + ".*", $options: "i" } },
+        { categoryName: { $regex: ".*" + search + ".*", $options: "i" } },
+        // {description:{$regex:'.*'+search+'.*',$options:'i'}},
+      ],
+    })
       .limit(limit * 1)
-      .skip((page-1) * limit ) 
-      .exec()
+      .skip((page - 1) * limit)
+      .exec();
 
-      const count = await Product.find({is_delete:false,
-        $or:[
-          {productName:{$regex:'.*'+search+'.*',$options:'i'}},
-          {categoryName:{$regex:'.*'+search+'.*',$options:'i'}},
-          // {description:{$regex:'.*'+search+'.*',$options:'i'}},
-        ]
-      })
-      .countDocuments();
+    const count = await Product.find({
+      is_delete: false,
+      $or: [
+        { productName: { $regex: ".*" + search + ".*", $options: "i" } },
+        { categoryName: { $regex: ".*" + search + ".*", $options: "i" } },
+        // {description:{$regex:'.*'+search+'.*',$options:'i'}},
+      ],
+    }).countDocuments();
 
-      
-      const categoryData = await Category.find({is_delete:false});
-      
-      
-      if (!session) {
-        return res.render("shop",{session:session,category:categoryData,product:productData,   
-          totalPages:Math.ceil(count/limit),currentPage:page});
-      }
-  
-      const userData = await User.findById({_id:req.session.user_id});
-      if (userData) {
-        return res.render("shop", {user:userData,session,category:categoryData,product:productData,
-          totalPages:Math.ceil(count/limit),currentPage:page});
-      } else {
-        const session = null
-        return res.render("shop",{session,category:categoryData,product:productData,
-          totalPages:Math.ceil(count/limit),currentPage:page});
-      }
-    } catch (error) {
-      next(error)
+    const categoryData = await Category.find({ is_delete: false });
+
+    if (!session) {
+      return res.render("shop", {
+        session: session,
+        category: categoryData,
+        product: productData,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      });
     }
-}
 
-
+    const userData = await User.findById({ _id: req.session.user_id });
+    if (userData) {
+      return res.render("shop", {
+        user: userData,
+        session,
+        category: categoryData,
+        product: productData,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      });
+    } else {
+      const session = null;
+      return res.render("shop", {
+        session,
+        category: categoryData,
+        product: productData,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 //================================ LOAD VERIFICATION ==============================//
 
-const loadVerification = async (req, res,next) => {
+const loadVerification = async (req, res, next) => {
   try {
     res.render("verification");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //==================================== LOAD SINGLE PRODUCT ===========================//
 
-const loadSingle = async (req, res,next) => {
+const loadSingle = async (req, res, next) => {
   try {
     const id = req.params.id;
     const productData = await Product.find({ _id: id });
@@ -280,7 +292,7 @@ const loadSingle = async (req, res,next) => {
       });
     }
   } catch (error) {
-     next(error)
+    next(error);
   }
 };
 
@@ -310,7 +322,7 @@ const sendverifyMail = async (name, email, otp) => {
 
 //============================ VERIFY THE USER OTP AND REDIRECT TO LOGIN PAGE ========================//
 
-const verifyEmail = async (req, res,next) => {
+const verifyEmail = async (req, res, next) => {
   const otp2 = req.body.otp;
   console.log(otp2 + email + otp);
   try {
@@ -325,36 +337,39 @@ const verifyEmail = async (req, res,next) => {
       } else {
         res.render("verification", { message: "please check the otp again" });
       }
-    } else {``
+    } else {
+      ``;
       res.render("verification", { message: "please check the otp again" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //===================================  USER PROFILE LOAD ========================================//
 
-const loadUserProfile = async (req, res,next) => {
+const loadUserProfile = async (req, res, next) => {
   try {
     const session = req.session.user_id;
     const addressDetails = await Address.findOne({
       userId: req.session.user_id,
     });
     const userData = await User.findById({ _id: req.session.user_id });
-   
-    if(addressDetails){
+
+    if (addressDetails) {
       const address = addressDetails.addresses;
       res.render("userProfile", { session: session, address, user: userData });
-    }else{
-      res.render("userProfile", { session: session, address:[], user: userData });
+    } else {
+      res.render("userProfile", {
+        session: session,
+        address: [],
+        user: userData,
+      });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
-
-
 
 //===================================== FOR RESET PASSWORD SEND EMAIL ===============================//
 
@@ -384,17 +399,17 @@ const sendResetPassword = async (name, email, otp3) => {
 };
 
 //============================ LOAD FORGET PAGE =======================================//
-const loadForget = async (req, res,next) => {
+const loadForget = async (req, res, next) => {
   try {
     res.render("forget");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 // ============================== VERIFY USER AND SENTING THE RESET PASSWORD ==============================//
 
-const forgetVerify = async (req, res,next) => {
+const forgetVerify = async (req, res, next) => {
   try {
     const email = req.body.email;
     emalreset = email;
@@ -416,13 +431,13 @@ const forgetVerify = async (req, res,next) => {
       res.render("forget", { message: "email is incorrect" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //=================================== VERIFY FORGET PASSWORD OTP ==============================//
 
-const verifyForgetOtp = async (req, res,next) => {
+const verifyForgetOtp = async (req, res, next) => {
   try {
     const otp4 = req.body.otp4;
     console.log(otp4 + "this is otp from user entered");
@@ -433,23 +448,23 @@ const verifyForgetOtp = async (req, res,next) => {
       res.render("forget", { message: "something went wrong" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //======================================= LOAD CHANGE PASSWORD =============================== //
 
-const loadChangePassword = async (req, res,next) => {
+const loadChangePassword = async (req, res, next) => {
   try {
     res.render("changePassword");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //==================================== CHANGE PASSWORD / PASSWORDING CHANGING (CHECKING)===================== //
 
-const changePassword = async (req, res,next) => {
+const changePassword = async (req, res, next) => {
   try {
     console.log(emalreset);
 
@@ -467,90 +482,102 @@ const changePassword = async (req, res,next) => {
       res.render("changePassword", { message: "password is not matching" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 ///=========================== filter category====================== ///
 
-const filterCategory = async (req,res,next)=>{
-  try{
-    var search = '';
-    if(req.query.search){
+const filterCategory = async (req, res, next) => {
+  try {
+    var search = "";
+    if (req.query.search) {
       search = req.query.search;
     }
     const id = req.params.id;
     const limit = 6;
-    const count = await Product.find({is_delete:false,
-      $or:[
-        {productName:{$regex:'.*'+search+'.*',$options:'i'}},
-        {categoryName:{$regex:'.*'+search+'.*',$options:'i'}},
-        // {description:{$regex:'.*'+search+'.*',$options:'i'}},
-      ]
-    })
-    .countDocuments();
+    const count = await Product.find({
+      is_delete: false,
+      $or: [
+        { productName: { $regex: ".*" + search + ".*", $options: "i" } },
+        { categoryName: { $regex: ".*" + search + ".*", $options: "i" } },
+      ],
+    }).countDocuments();
     const session = req.session.user_id;
-    const categoryData = await Category.find({is_delete:false});
- 
-    const userData = await User.find({})
-    
-    const productData = await Product.find({categoryName:id,is_delete:false})
+    const categoryData = await Category.find({ is_delete: false });
 
-    if(categoryData.length > 0){
-      res.render('shop',{totalPages:Math.ceil(count/limit),product:productData,session,category:categoryData,user:userData});
-    }else{
-      res.render('shop',{totalPages:Math.ceil(count/limit),product:[],session,category:categoryData,user:userData});
-      
+    const userData = await User.find({});
+
+    const productData = await Product.find({
+      categoryName: id,
+      is_delete: false,
+    });
+
+    if (categoryData.length > 0) {
+      res.render("shop", {
+        totalPages: Math.ceil(count / limit),
+        product: productData,
+        session,
+        category: categoryData,
+        user: userData,
+      });
+    } else {
+      res.render("shop", {
+        totalPages: Math.ceil(count / limit),
+        product: [],
+        session,
+        category: categoryData,
+        user: userData,
+      });
     }
-
-
-  }catch(error){
-    next(error)
+  } catch (error) {
+    next(error);
   }
-}
+};
 
-
-const priceSort=async(req,res,next)=>{
+const priceSort = async (req, res, next) => {
   try {
-    var search = '';
-    if(req.query.search){
+    var search = "";
+    if (req.query.search) {
       search = req.query.search;
     }
     const limit = 6;
-    const count = await Product.find({is_delete:false,
-      $or:[
-        {productName:{$regex:'.*'+search+'.*',$options:'i'}},
-        {categoryName:{$regex:'.*'+search+'.*',$options:'i'}},
-        // {description:{$regex:'.*'+search+'.*',$options:'i'}},
-      ]
-    })
-    .countDocuments();
-    const id=req.params.id
-    const session=req.session.user_id
-    const userData=await User.findById(session)
-    const categoryData=await Category.find({is_delete:false})
-    const sortData= await Product.find({}).sort({price:id})
-    if(sortData){
-      res.render("shop",{totalPages:Math.ceil(count/limit),product:sortData,session,category:categoryData,user:userData})
-    }else{
-      redirect('/shop')
+    const count = await Product.find({
+      is_delete: false,
+      $or: [
+        { productName: { $regex: ".*" + search + ".*", $options: "i" } },
+        { categoryName: { $regex: ".*" + search + ".*", $options: "i" } },
+      ],
+    }).countDocuments();
+    const id = req.params.id;
+    const session = req.session.user_id;
+    const userData = await User.findById(session);
+    const categoryData = await Category.find({ is_delete: false });
+    const sortData = await Product.find({}).sort({ price: id });
+    if (sortData) {
+      res.render("shop", {
+        totalPages: Math.ceil(count / limit),
+        product: sortData,
+        session,
+        category: categoryData,
+        user: userData,
+      });
+    } else {
+      redirect("/shop");
     }
-   
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-const loadAbout=async(req,res)=>{
+const loadAbout = async (req, res) => {
   try {
-    const session=req.session.user_id
-    res.render('about',{session})
+    const session = req.session.user_id;
+    res.render("about", { session });
   } catch (error) {
     console.log(error.message);
   }
-}
-
-
+};
 
 module.exports = {
   loadLogin,
@@ -574,5 +601,5 @@ module.exports = {
   loadChangePassword,
   // searchUser,
   filterCategory,
-  priceSort
+  priceSort,
 };

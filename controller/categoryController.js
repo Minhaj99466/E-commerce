@@ -5,7 +5,7 @@ let message = "";
 
 //======================= LOAD CATEGORY ==========================//
 
-const loadCategory = async (req, res,next) => {
+const loadCategory = async (req, res, next) => {
   try {
     const adminData = await User.findById({ _id: req.session.auser_id });
 
@@ -18,13 +18,13 @@ const loadCategory = async (req, res,next) => {
     });
     message = "";
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //======================= ADD CATEGORY =================================//
 
-const addCategory = async (req, res,next) => {
+const addCategory = async (req, res, next) => {
   try {
     const name = upperCase.upperCase(req.body.name);
     if (name.trim().length == 0) {
@@ -55,14 +55,14 @@ const addCategory = async (req, res,next) => {
       res.redirect("/admin/category");
     }
   } catch (error) {
-    next(error)
+    next(error);
     message = "something went wrong";
   }
 };
 
 //====================== LOAD ADD CATEGORY ==============================//
 
-const loadEditCategory = async (req, res,next) => {
+const loadEditCategory = async (req, res, next) => {
   try {
     const id = req.query.id;
     const category = await Category.findById({ _id: id });
@@ -70,13 +70,13 @@ const loadEditCategory = async (req, res,next) => {
 
     res.render("editCategory", { category: category, admin: adminData });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //=============================== EDIT CATEGORY ============================//
 
-const editCategory = async (req, res,next) => {
+const editCategory = async (req, res, next) => {
   try {
     const id = req.query.id;
     const categoryData = await Category.findById({ _id: id });
@@ -85,13 +85,13 @@ const editCategory = async (req, res,next) => {
       res.render("editCategory");
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //======================== UPDATE CATEGORY =========================//
 
-const updateCategory = async (req, res,next) => {
+const updateCategory = async (req, res, next) => {
   try {
     const id = req.body.id;
     const name = upperCase.upperCase(req.body.categoryName.trim());
@@ -111,13 +111,13 @@ const updateCategory = async (req, res,next) => {
 
     res.redirect("/admin/category");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
 //========================= DELETE CATEGORY ============================//
 
-const deleteCategory = async (req, res,next) => {
+const deleteCategory = async (req, res, next) => {
   try {
     const categoryData = await Category.updateOne(
       { _id: req.query.id },
@@ -125,7 +125,7 @@ const deleteCategory = async (req, res,next) => {
     );
     res.redirect("/admin/category");
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 

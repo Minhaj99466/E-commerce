@@ -163,7 +163,7 @@ const loadDashboard = async (req, res, next) => {
       total: totalAmount,
       totalCod,
       totalWallet,
-      totalOnline
+      totalOnline,
     });
   } catch (error) {
     next(error);
@@ -221,123 +221,123 @@ const unblock = async (req, res, next) => {
   }
 };
 
-const loadSalesReport=async(req,res,next)=>{
+const loadSalesReport = async (req, res, next) => {
   try {
-     console.log(req.query.id);
-    const adminData = await User.findById(req.session.auser_id);  
-    const order = await Order.aggregate([
-      { $unwind: "$products" },
-     { $match: { 'products.status': {$nin: ['Product Returned', 'waiting for approval'] } }},
-      { $sort: { date: -1 } },
-      {
-        $lookup: {
-          from: 'products',
-          let: { productId: { $toObjectId: '$products.productId' } },
-          pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } }
-          ],
-          as: 'products.productDetails'
-        }
-      },  
-      {
-        $addFields: {
-          'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
-        }
-      }
-    ]);
-
-    res.render('salesReport',{admin:adminData,order})
-  } catch (error) {
-    next(error)
-  }
-}
-
-const sortReport = async (req, res,next) => {
-  try {
-    console.log("sdgvshafdghfwaghesdfghsevdfghuwef");
-    const adminData = await User.findById({ _id: req.session.auser_id });
-    const from =req.body.fromDate
-    const to =req.body.toDate
-   
-   
-    
-    const order = await Order.aggregate([
-      { $unwind: "$products" },
-      {$match: { 'products.status': { $ne: 'Product Returned'  },
-        $and: [
-          { 'date': { $gt:new Date(from) } },
-          { 'date': { $lt: new Date(to)} }
-        ]
-      }},
-      { $sort: { date: -1 } },
-      {
-        $lookup: {
-          from: 'products',
-          let: { productId: { $toObjectId: '$products.productId' } },
-          pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } }
-          ],
-          as: 'products.productDetails'
-        }
-      },  
-      {
-        $addFields: {
-          'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
-        }
-      }
-    ]);
-    console.log(order)
-
-    res.render("salesReport", { order ,admin:adminData });
-   
-  } catch (error) {
-    next(error)
-  }
-}
-
-
-const sortReportFilter = async (req, res,next) => {
-  try {
-    
-    const adminData = await User.findById({ _id: req.session.auser_id });
-    var status=req.params.id
-    console.log(status,"dxfcgh");
-   
-    
+    console.log(req.query.id);
+    const adminData = await User.findById(req.session.auser_id);
     const order = await Order.aggregate([
       { $unwind: "$products" },
       {
         $match: {
-          'products.status': status // Filter based on the product status
-        }
+          "products.status": {
+            $nin: ["Product Returned", "waiting for approval"],
+          },
+        },
       },
       { $sort: { date: -1 } },
       {
         $lookup: {
-          from: 'products',
-          let: { productId: { $toObjectId: '$products.productId' } },
-          pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$productId'] } } }
-          ],
-          as: 'products.productDetails'
-        }
-      },  
+          from: "products",
+          let: { productId: { $toObjectId: "$products.productId" } },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+          as: "products.productDetails",
+        },
+      },
       {
         $addFields: {
-          'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
-        }
-      }
+          "products.productDetails": {
+            $arrayElemAt: ["$products.productDetails", 0],
+          },
+        },
+      },
     ]);
-    console.log(order)
 
-    res.render("salesReport", { order ,admin:adminData });
-   
+    res.render("salesReport", { admin: adminData, order });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
+const sortReport = async (req, res, next) => {
+  try {
+    console.log("sdgvshafdghfwaghesdfghsevdfghuwef");
+    const adminData = await User.findById({ _id: req.session.auser_id });
+    const from = req.body.fromDate;
+    const to = req.body.toDate;
 
+    const order = await Order.aggregate([
+      { $unwind: "$products" },
+      {
+        $match: {
+          "products.status": { $ne: "Product Returned" },
+          $and: [
+            { date: { $gt: new Date(from) } },
+            { date: { $lt: new Date(to) } },
+          ],
+        },
+      },
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+          from: "products",
+          let: { productId: { $toObjectId: "$products.productId" } },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+          as: "products.productDetails",
+        },
+      },
+      {
+        $addFields: {
+          "products.productDetails": {
+            $arrayElemAt: ["$products.productDetails", 0],
+          },
+        },
+      },
+    ]);
+    console.log(order);
+
+    res.render("salesReport", { order, admin: adminData });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const sortReportFilter = async (req, res, next) => {
+  try {
+    const adminData = await User.findById({ _id: req.session.auser_id });
+    var status = req.params.id;
+    console.log(status, "dxfcgh");
+
+    const order = await Order.aggregate([
+      { $unwind: "$products" },
+      {
+        $match: {
+          "products.status": status, // Filter based on the product status
+        },
+      },
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+          from: "products",
+          let: { productId: { $toObjectId: "$products.productId" } },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+          as: "products.productDetails",
+        },
+      },
+      {
+        $addFields: {
+          "products.productDetails": {
+            $arrayElemAt: ["$products.productDetails", 0],
+          },
+        },
+      },
+    ]);
+    console.log(order);
+
+    res.render("salesReport", { order, admin: adminData });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   loadLogin,
@@ -349,5 +349,5 @@ module.exports = {
   unblock,
   loadSalesReport,
   sortReport,
-  sortReportFilter
+  sortReportFilter,
 };
