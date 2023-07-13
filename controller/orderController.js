@@ -39,6 +39,7 @@ const placeOrder = async (req, res, next) => {
       status: status,
     });
     const orderData = await order.save();
+    const orderId= orderData._id
     if (orderData) {
       for (let i = 0; i < products.length; i++) {
         const count = products[i].count;
@@ -50,7 +51,7 @@ const placeOrder = async (req, res, next) => {
       }
       if (order.status === "placed") {
         await Cart.deleteOne({ userId: id });
-        res.json({ codsuccess: true });
+        res.json({ codsuccess: true,orderId });
       } else {
         if (paymentMethod === "walletpayement") {
           const wallet = userName.wallet;
@@ -121,7 +122,8 @@ const verifyPayment = async (req, res, next) => {
         { $set: { paymentId: details.payment.razorpay_payment_id } }
       );
       await Cart.deleteOne({ userId: req.session.user_id });
-      res.json({ success: true });
+      const orderId = details.order.receipt;
+      res.json({ success: true,orderId });
     } else {
       await Order.findByIdAndRemove({ _id: details.order.receipt });
       res.json({ success: false });
@@ -434,6 +436,22 @@ const loadInvoice=async (req, res,next) => {
   }
 };
 
+const loadOrderPlace = async(req,res,next) =>{
+  try{
+    const id = req.params.id;
+    console.log(id+"jjjjjjjjjjjjjjj");
+    const session = req.session.user_id;
+    const userData = await User.findById(session); 
+    const orderData = await Order.findOne({_id:id}).populate('products.productId');
+    const orderDate = orderData.date
+    const expectedDate = new Date(orderDate.getTime() + (5 * 24 * 60 * 60 * 1000)); 
+    res.render('orderPlaced',{user:userData,session,order:orderData,expectedDate});
+
+  }catch(err){
+    next(err)
+  }
+}
+
 
 module.exports = {
   placeOrder,
@@ -447,4 +465,5 @@ module.exports = {
   CancelOrder,
   loadInvoice,
   returnOrderApproval,
+  loadOrderPlace
 };

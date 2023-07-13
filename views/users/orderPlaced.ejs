@@ -1,0 +1,158 @@
+<%- include('../userLayout/header.ejs')%>
+
+    <header class="header header-5" style="background-color: #0c0c0c96 !important;margin-top: 0 !important;">
+        <div class="header-middle sticky-header">
+            <div class="container-fluid">
+                <div class="header-left">
+                    <button class="mobile-menu-toggler">
+                        <span class="sr-only">Toggle mobile menu</span>
+                        <i class="icon-bars"></i>
+                    </button>
+                    <a href="index.html" class="logo">
+                        <img src="/userAssets/images/demos/demo-5/logo 2.png" alt="Molla Logo" width="45" height="25">
+                    </a>
+                    <nav class="main-nav">
+                        <ul class="menu sf-arrows">
+                            <li class="megamenu-container active">
+                                <a href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="/product">Shop</a>
+                            </li>
+                        </ul><!-- End .menu -->
+                    </nav><!-- End .main-nav -->
+                </div><!-- End .header-left -->
+            </div><!-- End .container-fluid -->
+        </div><!-- End .header-middle -->
+    </header><!-- End .header -->
+
+    
+        <div class="row d-flex cart align-items-center justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-6 border-right p-5">
+                            <div class="text-center order-details">
+                                <div class="d-flex justify-content-center mb-5 flex-column align-items-center">
+                                    <span class="check1"><i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="font-weight-bold">Order Confirmed</span>
+                                    <small class="mt-2">Your order delivered soon</small> <a href="#"
+                                        class="text-decoration-none invoice-link">View Invoice</a>
+                                </div>
+                                <a href="/shop"><button class="btn btn-danger btn-block order-button">CONTINUE
+                                        SHOPPING</button></a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 background-muted">
+                            <div class="p-3 border-bottom">
+                                <% if (order.products.length> 0) {
+                                    order.products.forEach((orders) => { %>
+                                    <div class="mt-3">
+                                        <h6 class="mb-0">
+                                            <%= orders.productId.productName %>
+                                        </h6>
+                                        <span class="d-block mb-0">Qty : <%= orders.count%></span>
+                                        <span class="d-block mb-0">Product Price : ₹ <%= orders.totalPrice%>.00</span>
+                                        <% }); } %>
+                                    </div>
+                                    <div class="mt-3">
+                                        <span class="d-block mb-0">Order Date :<%=
+                                                order.date.toLocaleDateString('en-US', { year: 'numeric' ,
+                                                month: 'short' , day: '2-digit' }).replace(/\//g, '-' ) %> </span>
+                                        <span class="d-block mb-0">Payment Method : <%= order.paymentMethod %></span>
+                                        <span class="d-block mb-0">Order Id : <%= order._id %></span>
+                                    </div>
+                            </div>
+                            <div class="row g-0 border-bottom">
+                                <div class="col-md-6">
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>Delivery
+                                            charge</span> </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹
+                                            0.00</span> </div>
+                                </div>
+                            </div>
+                            <div class="row g-0">
+                                <div class="col-md-6">
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span
+                                            class="font-weight-bold">Total</span> </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span
+                                            class="font-weight-bold">₹ <%= order.totalAmount %>.00</span> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");
+
+        body {
+            background-color: #eee;
+            font-family: "Poppins", sans-serif;
+            font-weight: 300
+        }
+
+        .cart {
+            height: 100vh
+        }
+
+        .progresses {
+            display: flex;
+            align-items: center
+        }
+
+        .line {
+            width: 76px;
+            height: 6px;
+            background: #63d19e
+        }
+
+        .steps {
+            display: flex;
+            background-color: #63d19e;
+            color: #fff;
+            font-size: 12px;
+            width: 30px;
+            height: 30px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%
+        }
+
+        .check1 {
+            display: flex;
+            background-color: #63d19e;
+            color: #fff;
+            font-size: 17px;
+            width: 60px;
+            height: 60px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 10px
+        }
+
+        .invoice-link {
+            font-size: 15px
+        }
+
+        .order-button {
+            height: 50px
+        }
+
+        .background-muted {
+            background-color: #fafafc
+        }
+    </style>
+
+
+
+  
+<%- include('../userLayout/footer.ejs') %>

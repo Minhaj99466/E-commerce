@@ -105,14 +105,22 @@ margin-top:20px;
 		#container {
 			background-color: #dcdcdc;
 		}
+		.download-btn {
+		text-align: right;
+		margin-bottom: 20px;
+	}
 </style>
 <body>
 	
 	
-	<div class="col-md-12" id="invoice" >   
-		<div class="row"  >
-			<button id="download" class="btn btn-primary ">Download</button>
-			   <div class="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3 ">
+	<div class="col-md-12" >   
+		<div class="download-btn">
+			<button id="download" class="btn btn-primary">Download</button>
+		</div>
+		
+		<div class="row" id="invoice"  >
+			
+			   <div class="receipt-main col-xs-12 col-sm-12 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3 ">
 				   <div class="row " >
 					   <div class="receipt-header">
 						   <div class="col-xs-6 col-sm-6 col-md-6">
@@ -140,14 +148,14 @@ margin-top:20px;
 								   <p><b>Email :</b><%= user.email%></p>
 								   <p><b>Order Date  :</b><%= order.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).replace(/\//g, '-') %></p>
 								   <p><b>Payment Method :</b><%= order.paymentMethod %></p>
-								   <p><b>Address :</b><%= order.deliveryAddress %></p>
+								   <p><b>Address : </b> <br><%= order.deliveryAddress %></p>
 							   </div>
 						   </div>
 					   </div>
 				   </div>
 				   
 				   <div>
-					   <table class="table table-bordered">
+					   <table class="table table-bordered col-sm-6 col-xs-6">
 						   <thead>
 							   <tr>
 								   <th>No</th>
@@ -200,21 +208,21 @@ margin-top:20px;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
 <script>
     window.onload = function () {
-    document.getElementById("download")
-        .addEventListener("click", () => {
+        document.getElementById("download").addEventListener("click", () => {
             const invoice = this.document.getElementById("invoice");
             console.log(invoice);
             console.log(window);
             var opt = {
-                margin: 1,
                 filename: 'Invoice.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'pdf', quality: 0.98 }, // Change 'jpeg' to 'pdf'
                 html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
             };
             html2pdf().from(invoice).set(opt).save();
-        })
-}
+        });
+    };
+</script>
+
 </script>
 
 </html>
