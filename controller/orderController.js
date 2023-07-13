@@ -418,7 +418,7 @@ const CancelOrder = async (req, res, next) => {
 };
 
 
-const loadInvoice=async (req, res) => {
+const loadInvoice=async (req, res,next) => {
   try {
     const id = req.params.id;
     const session = req.session.user_id;
@@ -427,34 +427,13 @@ const loadInvoice=async (req, res) => {
    
     const date = new Date()
    
-     data = {
-      order:orderData,
-      user:userData,
-      date,
-    }
-    
-
-    const filepathName = path.resolve(__dirname, '../views/users/invoice.ejs');
-   
-    const html = fs.readFileSync(filepathName).toString();
-    const ejsData = ejs.render(html, data);
-    
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
-    await page.setContent(ejsData, { waitUntil: 'networkidle0' });
-    const pdfBytes = await page.pdf({ format: 'Letter' });
-    await browser.close();
-
-   
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename= order invoice.pdf');
-    res.send(pdfBytes);
-
+     res.render('invoice',{session,user:userData,order:orderData,date})
+      
   } catch (error) {
-    console.log(error);
-    res.status(500).send('An error occurred');
+    next(error)
   }
 };
+
 
 module.exports = {
   placeOrder,
