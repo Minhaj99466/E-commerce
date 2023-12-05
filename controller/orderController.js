@@ -50,7 +50,8 @@ const placeOrder = async (req, res, next) => {
       }
       if (order.status === "placed") {
         await Cart.deleteOne({ userId: id });
-        res.json({ codsuccess: true });
+        const orderId=orderData._id
+        res.json({ codsuccess: true,orderId });
       } else {
         if (paymentMethod === "walletpayement") {
           const wallet = userName.wallet;
@@ -101,7 +102,6 @@ const placeOrder = async (req, res, next) => {
 const verifyPayment = async (req, res, next) => {
   try {
     const details = req.body;
-
     const crypto = require("crypto");
     const hmac = crypto.createHmac("sha256", process.env.Razorpay_Key_Secret);
     hmac.update(
@@ -121,7 +121,8 @@ const verifyPayment = async (req, res, next) => {
         { $set: { paymentId: details.payment.razorpay_payment_id } }
       );
       await Cart.deleteOne({ userId: req.session.user_id });
-      res.json({ success: true });
+      const orderId = details.order.receipt;
+      res.json({ success: true,orderId });
     } else {
       await Order.findByIdAndRemove({ _id: details.order.receipt });
       res.json({ success: false });
@@ -417,6 +418,23 @@ const CancelOrder = async (req, res, next) => {
   }
 };
 
+const loadOrderPlace = async(req,res,next) =>{
+  try{
+    const id = req.params.id;
+    console.log(id,"hjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+    const session = req.session.user_id;
+    const userData = await User.findById(session); 
+    const orderData = await Order.findOne({_id:id}).populate('products.productId');
+    console.log(orderData,"llllllllllllllllllllllllllllllllll");
+    const orderDate = orderData.date
+    const expectedDate = new Date(orderDate.getTime() + (5 * 24 * 60 * 60 * 1000)); 
+    res.render('orderPlaced',{user:userData,session,order:orderData,expectedDate});
+
+  }catch(err){
+    next(err)
+  }
+}
+
 
 const loadInvoice = async (req, res) => {
   try {
@@ -455,6 +473,7 @@ const loadInvoice = async (req, res) => {
 
 
 module.exports = {
+  loadOrderPlace,
   placeOrder,
   verifyPayment,
   loadAdminOrders,

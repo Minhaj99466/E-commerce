@@ -243,6 +243,7 @@ $("#checkout-form").submit((e) => {
           },
           success: (response) => {
             if (response.codsuccess == true) {
+              
               const id = response.orderId;
               location.href = `/orderPlace/${id}`; 
             }else if(response.walletFailed == true){

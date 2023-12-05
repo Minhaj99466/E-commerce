@@ -59,6 +59,7 @@ userRoute.get('/emptyCart',auth.isLogin,cartController.loadEmptyCart)
 userRoute.get('/checkout',auth.isLogin,cartController.loadCheckout)
 userRoute.post('/checkout',orderController.placeOrder)
 userRoute.post('/verifyPayment',orderController.verifyPayment);
+userRoute.get('/orderPlace/:id',orderController.loadOrderPlace);
 
 //======================= ADDRESS SECTION ================= //
 
