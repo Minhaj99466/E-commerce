@@ -301,17 +301,19 @@ const loadSingle = async (req, res, next) => {
 const sendverifyMail = async (name, email, otp) => {
   try {
     const transporter = nodeMailer.createTransport({
-      service: "gmail",
+      service: "Gmail",
+      host:"smtp.gmail.com",
       auth: {
         user: process.env.mail,
         pass: process.env.password,
       },
     });
+    console.log(transporter,"transporteer");
     const mailOptions = {
       from: process.env.mail,
       to: email,
       subject: "verification Email",
-      html: `<p>Hi ${name}, please click <a href="http://localhost:3004/otp">here</a> to verify and enter your verification email.This${otp}</p> `,
+      html: `<p>Hi ${name}, please click <a href="http://localhost:3004/verification">here</a> to verify and enter your otp.This is your otp -${otp}</p> `,
     };
     console.log(otp);
     const info = await transporter.sendMail(mailOptions);

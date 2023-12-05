@@ -418,43 +418,41 @@ const CancelOrder = async (req, res, next) => {
 };
 
 
-const loadInvoice=async (req, res) => {
+const loadInvoice = async (req, res) => {
   try {
     const id = req.params.id;
     const session = req.session.user_id;
-    const userData = await User.findById({_id:session})
-    const orderData = await Order.findOne({_id:id}).populate('products.productId');
-   
-    const date = new Date()
-   
-     data = {
-      order:orderData,
-      user:userData,
+    const userData = await User.findById(session);
+    const orderData = await Order.findOne({_id: id}).populate('products.productId');
+
+    const date = new Date();
+
+    const data = {
+      order: orderData,
+      user: userData,
       date,
-    }
-    
+    };
 
     const filepathName = path.resolve(__dirname, '../views/users/invoice.ejs');
-   
-    const html = fs.readFileSync(filepathName).toString();
+
+    const html = fs.readFileSync(filepathName, 'utf-8');
     const ejsData = ejs.render(html, data);
-    
-    const browser = await puppeteer.launch({ headless: 'new' });
+
+    const browser = await puppeteer.launch({ headless: true }); // Use headless: true for production use
     const page = await browser.newPage();
     await page.setContent(ejsData, { waitUntil: 'networkidle0' });
-    const pdfBytes = await page.pdf({ format: 'Letter' });
+    const pdfBuffer = await page.pdf({ format: 'Letter' });
     await browser.close();
 
-   
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename= order invoice.pdf');
-    res.send(pdfBytes);
-
+    res.setHeader('Content-Disposition', 'attachment; filename=order_invoice.pdf');
+    res.send(pdfBuffer);
   } catch (error) {
     console.log(error);
     res.status(500).send('An error occurred');
   }
 };
+
 
 module.exports = {
   placeOrder,
